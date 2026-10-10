@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Planillas La Primera</title>
+<meta name="theme-color" content="#1B2A4A">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Planillas">
+<style>
+:root{--navy:#1B2A4A;--gold:#C9A84C;--bg:#E8E6DF;--card:#F5F3EE;--line:#D8D4C8;--good:#3F7A4E;--warn:#B45A2B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--navy);font-family:-apple-system,Segoe UI,Roboto,sans-serif;padding:0 0 40px}
+header{background:var(--navy);color:#fff;padding:14px 16px;border-bottom:3px solid var(--gold)}
+h1{font:700 20px Georgia,serif;margin:0}
+header small{color:#cfd6e6}
+.wrap{padding:12px 16px;max-width:1400px;margin:auto}
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tabs button,.btn{border:1px solid var(--navy);background:var(--card);color:var(--navy);padding:8px 12px;border-radius:8px;font-size:14px;cursor:pointer}
+.tabs button.on,.btn.pri{background:var(--navy);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:14px}
+.card h2{font:700 17px Georgia,serif;margin:0 0 8px}
+.scroll{overflow:auto;max-height:75vh;border:1px solid var(--line);border-radius:8px;background:#fff}
+table{border-collapse:separate;border-spacing:0;font-family:"Courier New",monospace;font-size:15px}
+th,td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:5px 9px;text-align:center;white-space:nowrap}
+thead th{position:sticky;top:0;background:var(--navy);color:#fff;z-index:2;font-size:13px}
+th.pos,td.pos{position:sticky;left:0;background:var(--card);color:var(--navy);font-weight:700;z-index:1}
+thead th.pos{background:var(--navy);color:var(--gold);z-index:3}
+td.hi{background:var(--gold);color:var(--navy);font-weight:700}
+td.d{cursor:pointer}
+tr.acts td{background:var(--card);font-size:12px}
+tr.acts td button{font-size:11px;padding:2px 6px;margin:1px;border:1px solid var(--navy);background:#fff;border-radius:5px;cursor:pointer}
+input,textarea{font:15px "Courier New",monospace;padding:7px;border:1px solid var(--line);border-radius:6px;background:#fff;width:100%}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:end}.row>div{flex:1;min-width:150px}
+label{font-size:12px;display:block;margin-bottom:3px}
+.msg{font-size:13px;margin-top:6px}.ok{color:var(--good)}.err{color:var(--warn)}
+.hd{display:flex;align-items:center;gap:12px}.ball{width:72px;height:72px;flex:none}
+.pt{display:none}
+.tb{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-bottom:10px}.tb>div{min-width:130px}.tb select,.tb .btn{width:100%}
+@media print{
+ @page{size:A4 landscape;margin:8mm}
+ body{background:#fff}.tabs,.row,.acts,.noprint{display:none!important}
+ header{background:#fff;color:#1B2A4A;border-bottom:2px solid #C9A84C;padding:0 0 4px}header small{color:#555}
+ .wrap{padding:0}.card{border:0;padding:0;margin:0;break-inside:avoid}.card+.card{break-before:page}
+ body.pu #cd,body.pd #cu{display:none!important}
+ body.pd #cd{break-before:auto!important}
+ .tb{display:none!important}
+ .scroll{overflow:visible;max-height:none;border:0}
+ table{font-size:8.5pt}th,td{padding:2px 4px}
+ thead th{position:static;background:#1B2A4A!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ th.pos,td.pos{position:static;background:#eee!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ td.hi{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .pt{display:block;font-size:11px;margin:2px 0 6px}
+}
+</style></head><body>
+<header class="hd"><svg class="ball" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="g" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fff8e1"/><stop offset=".55" stop-color="#C9A84C"/><stop offset="1" stop-color="#8a6d22"/></radialGradient></defs><circle cx="50" cy="50" r="47" fill="url(#g)" stroke="#1B2A4A" stroke-width="3"/><circle cx="50" cy="50" r="37" fill="#F5F3EE" stroke="#1B2A4A" stroke-width="2"/><text x="50" y="55" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="13.5" fill="#1B2A4A">PRIMERA</text></svg><div><h1>Planillas · La Primera</h1><small>Se actualiza sola desde la base de La Primera · columnas = sorteos, filas = posiciones 01–20</small></div></header>
+<div class="wrap">
+<div class="tabs noprint"><span id="est" style="font-size:13px">Cargando datos…</span> <button class="btn" id="rec">↻ Actualizar</button> <button class="btn" id="res" hidden>Restaurar quitados</button></div>
+<div class="card noprint" id="sync" style="margin-bottom:12px"><h2 style="margin:0 0 6px">☁ Sincronizar marcas</h2>
+ <div id="sy-off"><div class="tb"><div style="flex:2;min-width:230px"><label>Dirección de la base (Firebase)</label><input id="sy-url" placeholder="https://xxxx-default-rtdb.firebaseio.com" style="font-size:13px"></div>
+ <div style="flex:2;min-width:200px"><label>Código secreto (el mismo en todos tus aparatos)</label><input id="sy-code" placeholder="tocá Generar" style="font-size:13px"></div>
+ <div><button class="btn" id="sy-gen">Generar código</button></div><div><button class="btn pri" id="sy-go">Conectar</button></div></div></div>
+ <div id="sy-on" hidden><span id="sy-st" style="font-size:13px"></span> <button class="btn" id="sy-now">Sincronizar ahora</button> <button class="btn" id="sy-info">Ver código</button> <button class="btn" id="sy-out">Desconectar</button></div></div>
+<div class="card" id="cu"><h2>Unidades</h2><div class="pt" id="pt-u"></div>
+ <div class="tb noprint">
+  <div><label>Orden de fechas</label><button class="btn" data-f="u" data-a="ord">Más nueva primero</button></div>
+  <div style="max-width:170px"><label>Marcas</label><button class="btn" data-f="u" data-a="clr">Borrar marcas (<span id="m-u">0</span>)</button></div>
+  <div><label>Desde</label><select class="btn" data-f="u" data-a="desde"></select></div>
+  <div><label>Hasta</label><select class="btn" data-f="u" data-a="hasta"></select></div>
+  <div style="max-width:90px"><label>Sorteos</label><b id="n-u"></b></div>
+  <div style="max-width:200px"><button class="btn pri" data-f="u" data-a="prt">🖨 Imprimir / PDF</button></div>
+ </div>
+ <div class="scroll" id="tu"></div></div>
+<div class="card" id="cd"><h2>Decenas</h2><div class="pt" id="pt-d"></div>
+ <div class="tb noprint">
+  <div><label>Orden de fechas</label><button class="btn" data-f="d" data-a="ord">Más nueva primero</button></div>
+  <div style="max-width:170px"><label>Marcas</label><button class="btn" data-f="d" data-a="clr">Borrar marcas (<span id="m-d">0</span>)</button></div>
+  <div><label>Desde</label><select class="btn" data-f="d" data-a="desde"></select></div>
+  <div><label>Hasta</label><select class="btn" data-f="d" data-a="hasta"></select></div>
+  <div style="max-width:90px"><label>Sorteos</label><b id="n-d"></b></div>
+  <div style="max-width:200px"><button class="btn pri" data-f="d" data-a="prt">🖨 Imprimir / PDF</button></div>
+ </div>
+ <div class="scroll" id="td"></div></div>
+</div>
+<script>
+const URL_DATA="https://gabrielawilsonheguy-ai.github.io/quiniela-bolillero/data/resultados.json";
+const CK="lw:planillas-cache-v1",SK="lw:planillas-estado-v2";
+const $=id=>document.getElementById(id);
+const g=k=>{try{return localStorage.getItem(k)}catch(e){return null}},st=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const fmt=iso=>{const[a,b,c]=iso.split("-");return c+"/"+b+"/"+a};
+const NAMES={u:"Unidades",d:"Decenas"};
+let data=[];
+const def=()=>({desde:"",hasta:"",newest:true,marks:[],ocultas:[]});
+let S={u:def(),d:def()};
+try{const x=JSON.parse(g(SK)||"null");if(x){S.u=Object.assign(def(),x.u);S.d=Object.assign(def(),x.d)}}catch(e){}
+const save=()=>st(SK,JSON.stringify(S));
+function parse(j){const out=[];const s=j&&j.sorteos||{};
+ for(const iso of Object.keys(s)){const p=s[iso]&&s[iso].primera;
+  if(Array.isArray(p)&&p.length===20&&p.every(x=>/^\d{4}$/.test(x)))
+   out.push({k:iso,f:fmt(iso),u:p.map(x=>x[3]).join(""),d:p.map(x=>x[2]).join("")})}
+ return out}
+const base=f=>data.filter(r=>!S[f].ocultas.includes(r.k)).sort((x,y)=>y.k.localeCompare(x.k));
+function rows(f){const c=S[f];let a=base(f);if(c.desde)a=a.filter(r=>r.k>=c.desde);if(c.hasta)a=a.filter(r=>r.k<=c.hasta);return c.newest?a:a.reverse()}
+function fill(f){const c=S[f],ks=base(f).map(r=>r.k);
+ if(c.desde&&!ks.includes(c.desde))c.desde="";if(c.hasta&&!ks.includes(c.hasta))c.hasta="";
+ const o=(sel,all)=>`<option value="">${all}</option>`+ks.map(k=>`<option value="${k}"${k===sel?" selected":""}>${fmt(k)}</option>`).join("");
+ document.querySelector(`[data-f=${f}][data-a=desde]`).innerHTML=o(c.desde,"El primero");
+ document.querySelector(`[data-f=${f}][data-a=hasta]`).innerHTML=o(c.hasta,"El último");
+ document.querySelector(`[data-f=${f}][data-a=ord]`).textContent=c.newest?"Más nueva primero":"Más vieja primero";
+}
+function build(f){const r=rows(f),c=S[f];
+ let h='<table><thead><tr><th class="pos">Pos</th>'+r.map(x=>`<th>${x.f.slice(0,5)}<br><small>${x.f.slice(6)}</small></th>`).join("")+'</tr></thead><tbody>';
+ for(let i=0;i<20;i++){h+=`<tr><td class="pos">${String(i+1).padStart(2,"0")}</td>`+r.map(x=>{const d=x[f][i],id=x.k+"|"+i;return `<td class="d${c.marks.includes(id)?" hi":""}" data-f="${f}" data-m="${id}">${d}</td>`}).join("")+'</tr>'}
+ h+='<tr class="acts"><td class="pos">·</td>'+r.map(x=>`<td><button data-f="${f}" data-del="${x.k}">Quitar</button></td>`).join("")+'</tr></tbody></table>';
+ $("t"+f).innerHTML=h;$("n-"+f).textContent=r.length;$("m-"+f).textContent=c.marks.length}
+function render(f){if(f){fill(f);build(f)}else{render("u");render("d")}
+ const n=S.u.ocultas.length+S.d.ocultas.length;$("res").hidden=!n;$("res").textContent="Restaurar quitados ("+n+")"}
+document.addEventListener("click",e=>{const t=e.target,f=t.dataset.f;
+ if(t.dataset.del){if(!confirm("¿Quitar el sorteo del "+fmt(t.dataset.del)+" de la planilla de "+NAMES[f]+"?\n\nNo se borra de la base original; podés restaurarlo."))return;S[f].ocultas.push(t.dataset.del);save();render(f)}
+ else if(t.dataset.m){const m=S[f].marks,i=m.indexOf(t.dataset.m);if(i>=0)m.splice(i,1);else m.push(t.dataset.m);save();t.classList.toggle("hi");$("m-"+f).textContent=m.length;yset(f,t.dataset.m,i<0)}
+ else if(t.dataset.a==="clr"){if(S[f].marks.length&&!confirm("¿Borrar las marcas de "+NAMES[f]+"?"))return;S[f].marks=[];save();render(f);yclear(f)}
+ else if(t.dataset.a==="ord"){S[f].newest=!S[f].newest;save();render(f)}
+ else if(t.dataset.a==="prt"){const r=rows(f);if(!r.length)return;const ks=r.map(x=>x.k).sort();
+  $("pt-"+f).textContent="La Primera · "+r.length+" sorteos · "+fmt(ks[0])+" a "+fmt(ks[ks.length-1]);
+  document.body.className="p"+f;window.print();document.body.className=""}});
+document.addEventListener("change",e=>{const t=e.target,f=t.dataset.f;if(t.dataset.a==="desde"||t.dataset.a==="hasta"){S[f][t.dataset.a]=t.value;save();build(f)}});
+
+$("res").onclick=()=>{S.u.ocultas=[];S.d.ocultas=[];save();render()};
+async function cargar(){
+ $("est").textContent="Actualizando…";
+ try{const r=await fetch(URL_DATA,{cache:"no-store"});if(!r.ok)throw new Error(r.status);const j=await r.json();
+  data=parse(j);st(CK,JSON.stringify({t:Date.now(),j:{updated:j.updated,sorteos:Object.fromEntries(Object.entries(j.sorteos||{}).map(([k,v])=>[k,{primera:v&&v.primera}]))}}));
+  const u=j.updated?new Date(j.updated).toLocaleString("es-AR",{dateStyle:"short",timeStyle:"short"}):"";
+  $("est").textContent="Base actualizada: "+u;}
+ catch(e){let c=null;try{c=JSON.parse(g(CK))}catch(x){}
+  if(c){data=parse(c.j);$("est").textContent="Sin conexión con la base; mostrando la última copia guardada.";}
+  else{data=[];$("est").textContent="No se pudo leer la base. Revisá tu conexión y tocá Actualizar.";}}
+ render()}
+
+// ---- sincronización de marcas (Firebase Realtime Database por REST) ----
+const YK="lw:planillas-sync-v1";let Y=null;try{Y=JSON.parse(g(YK)||"null")}catch(e){}
+const rk=id=>id.replace("|","_"),lk=r=>r.replace("_","|");
+const yb=()=>Y.url.replace(/\/+$/,"")+"/planillas/"+encodeURIComponent(Y.code);
+function ystat(t,bad){$("sy-st").textContent=t;$("sy-st").style.color=bad?"var(--warn)":"var(--good)"}
+function yui(){$("sy-off").hidden=!!Y;$("sy-on").hidden=!Y;if(Y)ystat("Conectado · sincroniza solo")}
+async function yreq(path,method,body){const r=await fetch(yb()+path+".json",{method,headers:{"Content-Type":"application/json"},body:body===undefined?undefined:JSON.stringify(body)});if(!r.ok)throw new Error(r.status);return r.json()}
+async function ypull(){if(!Y)return;try{const j=await yreq("","GET")||{};
+  for(const f of ["u","d"]){S[f].marks=Object.keys(j[f]||{}).map(lk);}
+  save();render();ystat("Sincronizado ✓ "+new Date().toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"}))}
+ catch(e){ystat("No se pudo sincronizar ("+e.message+"). Revisá la dirección y las reglas de Firebase.",1)}}
+async function yset(f,id,on){if(!Y)return;try{await yreq("/"+f+"/"+encodeURIComponent(rk(id)),on?"PUT":"DELETE",on?true:undefined);ystat("Sincronizado ✓ "+new Date().toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"}))}catch(e){ystat("No se pudo guardar la marca en la nube ("+e.message+")",1)}}
+async function yclear(f){if(!Y)return;try{await yreq("/"+f,"DELETE")}catch(e){ystat("No se pudo borrar en la nube ("+e.message+")",1)}}
+async function yconnect(){const url=$("sy-url").value.trim(),code=$("sy-code").value.trim();
+ if(!/^https:\/\/.+\.(firebaseio\.com|firebasedatabase\.app)\/?$/.test(url)){alert("La dirección debe verse así: https://algo-default-rtdb.firebaseio.com");return}
+ if(code.length<16){alert("El código tiene que tener al menos 16 caracteres. Tocá Generar código.");return}
+ Y={url,code};st(YK,JSON.stringify(Y));yui();
+ try{const j=await yreq("","GET")||{};const up={};
+  for(const f of ["u","d"])for(const id of S[f].marks)if(!(j[f]&&j[f][rk(id)]))(up[f]=up[f]||{})[rk(id)]=true;
+  for(const f in up)await yreq("/"+f,"PATCH",up[f])}catch(e){}
+ ypull()}
+$("sy-gen").onclick=()=>{const a=new Uint8Array(18);crypto.getRandomValues(a);$("sy-code").value=Array.from(a,x=>"abcdefghijkmnpqrstuvwxyz23456789"[x%32]).join("")};
+$("sy-go").onclick=yconnect;$("sy-now").onclick=ypull;
+$("sy-info").onclick=()=>prompt("Copiá este código. En tu otro aparato, pegá la misma dirección y este código:",Y.code);
+$("sy-out").onclick=()=>{if(confirm("¿Desconectar? Las marcas siguen en este aparato y en la nube."))Y=null,st(YK,"null"),yui()};
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)ypull()});setInterval(()=>{if(!document.hidden)ypull()},45000);
+yui();if(Y){$("sy-url").value=Y.url;$("sy-code").value=Y.code}
+$("rec").onclick=cargar;
+cargar().then(ypull);
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script></body></html>
