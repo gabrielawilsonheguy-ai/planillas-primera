@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Seguimiento · La Primera</title>
+<meta name="theme-color" content="#1B2A4A">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/seg-32.png">
+<link rel="apple-touch-icon" href="icons/seg-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Seguimiento">
+<style>
+:root{--navy:#1B2A4A;--gold:#C9A84C;--bg:#E8E6DF;--card:#F5F3EE;--line:#D8D4C8;--red:#C0392B;--rh:24px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--navy);font-family:-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:var(--navy);color:#fff;padding:6px 14px;border-bottom:3px solid var(--gold);display:flex;align-items:center;gap:12px}
+h1{font:700 17px Georgia,serif;margin:0}
+header small{color:#cfd6e6;font-size:11px}
+.wrap{padding:8px 12px}
+.card{margin-bottom:14px}.ttl{font:700 18px Georgia,serif;align-self:center;margin-right:6px}
+.scroll{overflow-x:auto;overflow-y:hidden}
+.tb{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-bottom:6px}
+.tb label{font-size:11px;display:block;margin-bottom:2px}
+.btn{border:1px solid var(--navy);background:var(--card);color:var(--navy);padding:5px 10px;border-radius:8px;font-size:13px;cursor:pointer}
+.btn.on,.btn.pri{background:var(--navy);color:#fff}
+select.btn{max-width:130px}
+.scroll{overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+table{border-collapse:separate;border-spacing:0;font-family:"Courier New",monospace}
+th,td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:0 7px;text-align:center;white-space:nowrap;height:var(--rh);font-size:calc(var(--rh)*.58);position:relative}
+thead th{position:sticky;top:0;background:var(--navy);color:#fff;z-index:2;font-size:11px;line-height:1.1;height:auto;padding:2px 7px}
+th.pos,td.pos{position:sticky;left:0;background:var(--card);font-weight:700;z-index:1}
+thead th.pos{background:var(--navy);color:var(--gold);z-index:3}
+th.fin,td.fin{background:#FBF3D9;font-weight:700;padding:0 4px}
+.f1{width:58px;min-width:58px;max-width:58px}.f2{width:84px;min-width:84px;max-width:84px}
+thead th.fin{white-space:normal}
+thead th.fin{background:var(--gold);color:var(--navy);z-index:2}
+td.fin{position:sticky;z-index:1}
+td svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+td.diag svg line{stroke:var(--red);stroke-width:1.6;vector-effect:non-scaling-stroke}
+.ci{display:inline-block;border:2px solid var(--navy);border-radius:50%;min-width:calc(var(--rh)*.9);height:calc(var(--rh)*.9);line-height:calc(var(--rh)*.9 - 4px)}
+#est{font-size:12px}
+.pt{display:none}
+@media print{
+ body.pu #cd,body.pd #cu{display:none!important}.card{margin:0}
+ @page{size:A4 landscape;margin:8mm}
+ body{background:#fff}.tb{display:none!important}
+ header{background:#fff;color:#1B2A4A;padding:0 0 4px}header small{color:#555}
+ .scroll{overflow:visible;border:0}
+ thead th{position:static;background:#1B2A4A!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ td.diag svg line{stroke:#C0392B!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ th.pos,td.pos,td.fin{position:static;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ table{--rh:15px}
+}
+</style></head><body>
+<header><div><h1>Seguimiento · La Primera</h1><small>Unidades: dígito más demorado · se actualiza sola</small></div></header>
+<div class="wrap">
+<div class="card" id="cu"><div class="tb">
+ <div class="ttl">Unidades</div>
+ <div><label>Orden</label><button class="btn" data-f="u" data-a="ord"></button></div>
+ <div><label>Desde</label><select class="btn" data-f="u" data-a="desde"></select></div>
+ <div><label>Hasta</label><select class="btn" data-f="u" data-a="hasta"></select></div>
+ <div><label>Sorteos</label><b id="n-u"></b></div>
+ <div><button class="btn" id="ver">Ir a la marca ›</button></div>
+ <div><button class="btn pri" data-f="u" data-a="prt">🖨 Imprimir / PDF</button></div>
+ <div id="est"></div>
+</div><div class="pt" id="pt-u"></div><div class="scroll" id="tu"></div></div>
+<div class="card" id="cd"><div class="tb">
+ <div class="ttl">Decenas</div>
+ <div><label>Orden</label><button class="btn" data-f="d" data-a="ord"></button></div>
+ <div><label>Desde</label><select class="btn" data-f="d" data-a="desde"></select></div>
+ <div><label>Hasta</label><select class="btn" data-f="d" data-a="hasta"></select></div>
+ <div><label>Sorteos</label><b id="n-d"></b></div>
+ 
+ <div><button class="btn pri" data-f="d" data-a="prt">🖨 Imprimir / PDF</button></div>
+ 
+</div><div class="pt" id="pt-d"></div><div class="scroll" id="td"></div></div>
+</div>
+<script>
+const URL_DATA="https://gabrielawilsonheguy-ai.github.io/quiniela-bolillero/data/resultados.json";
+const CK="lw:planillas-cache-v1",SK="lw:seguimiento-v2";
+const $=id=>document.getElementById(id);
+const g=k=>{try{return localStorage.getItem(k)}catch(e){return null}},st=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const fmt=iso=>{const[a,b,c]=iso.split("-");return c+"/"+b+"/"+a};
+let data=[];
+const def=()=>({newest:false,desde:"",hasta:""});
+let S={u:def(),d:def()};
+try{const x=JSON.parse(g(SK)||"null");if(x){Object.assign(S.u,x.u);Object.assign(S.d,x.d)}}catch(e){}
+const save=()=>st(SK,JSON.stringify(S));
+const NAMES={u:"Unidades",d:"Decenas"};
+function parse(j){const out=[],s=j&&j.sorteos||{};
+ for(const iso of Object.keys(s)){const p=s[iso]&&s[iso].primera;
+  if(Array.isArray(p)&&p.length===20&&p.every(x=>/^\d{4}$/.test(x)))
+   out.push({k:iso,f:fmt(iso),u:p.map(x=>x[3]).join(""),d:p.map(x=>x[2]).join("")})}
+ return out.sort((a,b)=>a.k.localeCompare(b.k))}   // viejo -> nuevo
+// Por cada posición (fila), de forma independiente: dígito más demorado (sobre TODA la historia).
+// Cuando ese dígito vuelve a salir se completó el ciclo de los 10 dígitos: la marca se borra y
+// se elige el nuevo dígito más demorado.
+function seguimiento(i){const n=data.length;if(n<2)return null;
+ const last={};data.forEach((r,k)=>{last[r.u[i]]=k});
+ let dig=null,L=Infinity;for(const d in last){if(last[d]<L){L=last[d];dig=d}}
+ if(dig===null||L>=n-1)return null;
+ return{dig,kDiag:data[L].k,kCirc:data[L+1].k,gap:n-1-L}}
+function rows(f){const c=S[f];let a=data.slice();if(c.desde)a=a.filter(r=>r.k>=c.desde);if(c.hasta)a=a.filter(r=>r.k<=c.hasta);return c.newest?a.reverse():a}
+function fill(f){const c=S[f],ks=data.map(r=>r.k).reverse();
+ if(c.desde&&!ks.includes(c.desde))c.desde="";if(c.hasta&&!ks.includes(c.hasta))c.hasta="";
+ const o=(sel,all)=>`<option value="">${all}</option>`+ks.map(k=>`<option value="${k}"${k===sel?" selected":""}>${fmt(k)}</option>`).join("");
+ document.querySelector(`[data-f=${f}][data-a=desde]`).innerHTML=o(c.desde,"El primero");
+ document.querySelector(`[data-f=${f}][data-a=hasta]`).innerHTML=o(c.hasta,"El último");
+ document.querySelector(`[data-f=${f}][data-a=ord]`).textContent=c.newest?"Más nueva a la izquierda":"Más nueva a la derecha"}
+function build(f){const r=rows(f),SG=f==="u"?Array.from({length:20},(_,i)=>seguimiento(i)):null;
+ let h='<table><thead><tr><th class="pos">Pos</th>'+r.map(x=>`<th>${x.f.slice(0,5)}<br>${x.f.slice(6)}</th>`).join("")+
+  (f==="u"?'<th class="fin f1" style="right:84px">Dígito</th><th class="fin f2" style="right:0">Sorteos sin salir</th>':'')+'</tr></thead><tbody>';
+ for(let i=0;i<20;i++){
+  h+=`<tr><td class="pos">${String(i+1).padStart(2,"0")}</td>`+r.map(x=>{const d=x[f][i];
+   let cls="",inner=d;const sg=SG&&SG[i];
+   if(sg){
+    if(x.k===sg.kDiag){cls=' class="diag"';inner=`<svg viewBox="0 0 10 10" preserveAspectRatio="none"><line x1="0" y1="10" x2="10" y2="0"/></svg>${d}`}
+    else if(x.k===sg.kCirc){inner=`<span class="ci">${d}</span>`}}
+   return `<td${cls}>${inner}</td>`}).join("");
+  if(f==="u")h+=(SG[i]?`<td class="fin f1" style="right:84px">${SG[i].dig}</td><td class="fin f2" style="right:0">${SG[i].gap}</td>`:`<td class="fin f1" style="right:84px"></td><td class="fin f2" style="right:0"></td>`);
+  h+='</tr>'}
+ h+='</tbody></table>';$("t"+f).innerHTML=h;$("n-"+f).textContent=r.length;if(!S[f].newest)$("t"+f).scrollLeft=$("t"+f).scrollWidth}
+// Cada planilla ocupa una pantalla: las 20 posiciones se ven completas, sin scroll interno.
+function fit(){const c=$("cu"),t=$("tu");const top=t.getBoundingClientRect().top-c.getBoundingClientRect().top;
+ const headH=34,avail=window.innerHeight-document.querySelector("header").offsetHeight-top-headH-26;
+ const rh=Math.max(18,Math.min(34,Math.floor(avail/20)));
+ document.documentElement.style.setProperty("--rh",rh+"px")}
+function render(f){if(f){fill(f);build(f)}else{render("u");render("d")}fit()}
+document.addEventListener("click",e=>{const t=e.target,f=t.dataset.f;
+ if(t.dataset.a==="ord"){S[f].newest=!S[f].newest;save();render(f)}
+ else if(t.dataset.a==="prt"){const r=rows(f);if(!r.length)return;const ks=r.map(x=>x.k).sort();
+  $("pt-"+f).textContent="La Primera · "+NAMES[f]+" · "+r.length+" sorteos · "+fmt(ks[0])+" a "+fmt(ks[ks.length-1]);
+  document.body.className="p"+f;window.print();document.body.className=""}});
+document.addEventListener("change",e=>{const t=e.target,f=t.dataset.f;if(t.dataset.a==="desde"||t.dataset.a==="hasta"){S[f][t.dataset.a]=t.value;save();build(f)}});
+let vi=0;$("ver").onclick=()=>{const cs=document.querySelectorAll("#tu td.diag");if(!cs.length)return;vi=vi%cs.length;
+ const td=cs[vi];const row=td.parentElement.rowIndex;$("ver").textContent="Ir a la marca (pos "+String(row).padStart(2,"0")+") ›";
+ td.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});vi++};
+window.addEventListener("resize",fit);
+async function cargar(){
+ $("est").textContent="Actualizando…";
+ try{const r=await fetch(URL_DATA,{cache:"no-store"});if(!r.ok)throw new Error(r.status);const j=await r.json();
+  data=parse(j);st(CK,JSON.stringify({t:Date.now(),j:{updated:j.updated,sorteos:Object.fromEntries(Object.entries(j.sorteos||{}).map(([k,v])=>[k,{primera:v&&v.primera}]))}}));
+  $("est").textContent="Base actualizada: "+(j.updated?new Date(j.updated).toLocaleString("es-AR",{dateStyle:"short",timeStyle:"short"}):"")}
+ catch(e){let c=null;try{c=JSON.parse(g(CK))}catch(x){}
+  if(c){data=parse(c.j);$("est").textContent="Sin conexión; mostrando la última copia guardada."}
+  else{data=[];$("est").textContent="No se pudo leer la base."}}
+ render()}
+cargar();
+</script></body></html>
