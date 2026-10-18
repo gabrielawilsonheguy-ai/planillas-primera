@@ -30,7 +30,7 @@ thead th{position:sticky;top:0;background:var(--navy);color:#fff;z-index:2;font-
 th.pos,td.pos{position:sticky;left:0;background:var(--card);font-weight:700;z-index:1}
 thead th.pos{background:var(--navy);color:var(--gold);z-index:3}
 th.fin,td.fin{background:#FBF3D9;font-weight:700;padding:0 4px}
-.f1{width:58px;min-width:58px;max-width:58px}.f3{width:124px;min-width:124px;max-width:124px}.f2{width:84px;min-width:84px;max-width:84px}
+.f1{width:58px;min-width:58px;max-width:58px}.f3{width:130px;min-width:130px;max-width:130px}.f2{width:84px;min-width:84px;max-width:84px}
 thead th.fin{white-space:normal}
 thead th.fin{background:var(--gold);color:var(--navy);z-index:2}
 td.fin{position:sticky;z-index:1}
@@ -103,31 +103,27 @@ function parse(j){const out=[],s=j&&j.sorteos||{};
 // Por cada posición (fila), de forma independiente: dígito más demorado (sobre TODA la historia).
 // Cuando ese dígito vuelve a salir se completó el ciclo de los 10 dígitos: la marca se borra y
 // se elige el nuevo dígito más demorado.
-// Ciclo = hasta que salieron los 10 dígitos en esa posición. El que sale último cierra el ciclo (cuadrado)
-// y el ciclo siguiente arranca desde cero ("En búsqueda") hasta que quedan 9 vistos y se identifica el que falta.
+// Dígito más demorado de cada posición (candidato a ser el último que falta) + progreso del ciclo.
+// Ciclo = hasta que salieron los 10 dígitos en esa posición; el que sale último lo cierra (cuadrado)
+// y el ciclo siguiente arranca de cero.
 function seguimiento(i){const n=data.length;if(n<2)return null;
- const cierres=[];let cs=0,seen=new Set(),ult=null;
- const prev=(d,t)=>{for(let k=t-1;k>=0;k--)if(data[k].u[i]===d)return k;return -1};
+ // ciclos
+ const cierres=[];let seen=new Set(),ult=null;
  for(let t=0;t<n;t++){const d=data[t].u[i];seen.add(d);
-  if(seen.size===10){const Lp=prev(d,t);cierres.push(data[t].k);ult={t,d,Lp};cs=t+1;seen=new Set()}}
- const R={cierres,estado:"",dig:"",gap:"",kDiag:null,kCirc:null,oldHasta:null};
- if(ult&&ult.t===n-1){ // acaba de salir el que se esperaba
-  R.estado="Salió "+ult.d+" ✓";R.sal=true;R.dig=ult.d;R.gap=ult.t-ult.Lp-1;
-  if(ult.Lp>=0){R.kDiag=data[ult.Lp].k;R.kCirc=data[ult.Lp+1].k;R.oldHasta=R.kDiag}
-  return R}
- if(seen.size===9){ // se identificó el dígito que falta
-  const X="0123456789".split("").find(d=>!seen.has(d));const L=prev(X,cs);
-  R.estado="En proceso";R.dig=X;
-  if(L>=0){R.kDiag=data[L].k;R.kCirc=data[L+1].k;R.gap=n-1-L;R.oldHasta=R.kDiag}else{R.gap=n}
-  return R}
- R.estado="Búsqueda "+seen.size+"/10";R.dig="—";R.gap="—";R.busq=true;
- if(cs>0)R.oldHasta=data[cs].k;      // lo del ciclo anterior queda en gris
+  if(seen.size===10){cierres.push(data[t].k);ult={t,d};seen=new Set()}}
+ // más demorado (sobre toda la historia)
+ const last={};data.forEach((r,t)=>{last[r.u[i]]=t});
+ let dig=null,L=Infinity;for(const d in last){if(last[d]<L){L=last[d];dig=d}}
+ if(dig===null||L>=n-1)return null;
+ const R={cierres,dig,gap:n-1-L,kDiag:data[L].k,kCirc:data[L+1].k,oldHasta:data[L].k};
+ if(ult&&ult.t===n-1){R.estado="Salió "+ult.d+" ✓";R.sal=true}
+ else R.estado="En proceso "+seen.size+"/10";
  return R}
 function rows(f){const a=data.slice();return S[f].newest?a.reverse():a}
 function fill(f){document.querySelector(`[data-f=${f}][data-a=ord]`).textContent=S[f].newest?"Más nueva a la izquierda":"Más nueva a la derecha"}
 function build(f){const r=rows(f),c=S[f],SG=f==="u"?Array.from({length:20},(_,i)=>seguimiento(i)):null;
  let h='<table><thead><tr><th class="pos">Pos</th>'+r.map(x=>`<th>${x.f.slice(0,5)}<br>${x.f.slice(6)}</th>`).join("")+
-  (f==="u"?'<th class="fin f1" style="right:208px">Dígito</th><th class="fin f2" style="right:124px">Sorteos sin salir</th><th class="fin f3" style="right:0">Estado</th>':'')+'</tr></thead><tbody>';
+  (f==="u"?'<th class="fin f1" style="right:214px">Dígito</th><th class="fin f2" style="right:130px">Sorteos sin salir</th><th class="fin f3" style="right:0">Estado</th>':'')+'</tr></thead><tbody>';
  for(let i=0;i<20;i++){
   const sg=SG&&SG[i];
   h+=`<tr${HL[f]===i?' class="hl"':''}><td class="pos" data-f="${f}" data-p="${i}">${String(i+1).padStart(2,"0")}</td>`+r.map(x=>{const d=x[f][i],id=x.k+"|"+i;
@@ -139,7 +135,7 @@ function build(f){const r=rows(f),c=S[f],SG=f==="u"?Array.from({length:20},(_,i)
     if(sg.kDiag&&x.k===sg.kDiag){cls+=" diag";inner=`<svg viewBox="0 0 10 10" preserveAspectRatio="none"><line x1="0" y1="10" x2="10" y2="0"/></svg>${inner}`}}
    if(c.marks.includes(id))cls+=" hi";
    return `<td class="${cls}" data-f="${f}" data-m="${id}">${inner}</td>`}).join("");
-  if(f==="u")h+=(sg?`<td class="fin f1" style="right:208px">${sg.dig}</td><td class="fin f2" style="right:124px">${sg.gap}</td><td class="fin f3 ${sg.sal?'sal':'prc'}" style="right:0">${sg.estado}</td>`:`<td class="fin f1" style="right:208px"></td><td class="fin f2" style="right:124px"></td><td class="fin f3" style="right:0"></td>`);
+  if(f==="u")h+=(sg?`<td class="fin f1" style="right:214px">${sg.dig}</td><td class="fin f2" style="right:130px">${sg.gap}</td><td class="fin f3 ${sg.sal?'sal':'prc'}" style="right:0">${sg.estado}</td>`:`<td class="fin f1" style="right:214px"></td><td class="fin f2" style="right:130px"></td><td class="fin f3" style="right:0"></td>`);
   h+='</tr>'}
  h+='</tbody></table>';$("t"+f).innerHTML=h;$("n-"+f).textContent=r.length;if(!c.newest)$("t"+f).scrollLeft=$("t"+f).scrollWidth}
 // Cada planilla ocupa una pantalla: las 20 posiciones se ven completas, sin scroll interno.
