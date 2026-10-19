@@ -109,14 +109,16 @@ function seguimiento(i){const n=data.length;if(n<2)return null;
  const last={};let ult=null;
  for(let t=0;t<n;t++){const d=data[t].u[i];
   if(Object.keys(last).length===10){let tg=null,m=Infinity;for(const x in last)if(last[x]<m){m=last[x];tg=x}
-   if(d===tg)ult={t,d}}
+   if(d===tg)ult={t,d,Lp:last[d]}}
   last[d]=t}
  let dig=null,L=Infinity;for(const d in last){if(last[d]<L){L=last[d];dig=d}}
  const sale=ult&&ult.t===n-1;
  if(dig===null||L>=n-1)return null;
  const dist=new Set();for(let t=L+1;t<n;t++)dist.add(data[t].u[i]);
  const R={cierres:sale?[data[n-1].k]:[],dig,gap:n-1-L,kDiag:data[L].k,kCirc:data[L+1].k,oldHasta:data[L].k,x:dist.size};
- if(sale){R.estado="Salió "+ult.d+" ✓";R.sal=true}
+ if(sale){R.estado="Salió "+ult.d+" ✓";R.sal=true;
+  // se muestra el ciclo que acaba de cerrarse: el dígito que salió y cuánto tardó (la fila pasa al nuevo dígito en el sorteo siguiente)
+  R.dig=ult.d;R.gap=ult.t-ult.Lp-1;R.kDiag=data[ult.Lp].k;R.kCirc=data[ult.Lp+1].k;R.oldHasta=R.kDiag}
  else if(Object.keys(last).length<10){R.estado="Búsqueda "+dist.size+"/10";R.proc=false}
  else{R.estado="En proceso "+dist.size+"/10";R.proc=true}
  return R}
