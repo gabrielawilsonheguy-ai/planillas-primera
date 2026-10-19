@@ -42,7 +42,7 @@ td.d{cursor:pointer}
 td.old{background:#dcdcdc;color:#8a8a8a}
 .sq{display:inline-block;border:2px solid #2E7D4F;border-radius:3px;min-width:calc(var(--rh)*.9);height:calc(var(--rh)*.9);line-height:calc(var(--rh)*.9 - 4px)}
 .sq .ci{border-width:2px;min-width:0;height:auto;line-height:1;padding:0 1px}
-td.fin.sal{background:#CDEBD6;color:#1F5C38;font-size:calc(var(--rh)*.46)}td.fin.prc{font-size:calc(var(--rh)*.46);font-weight:400}
+td.fin.sal{background:#CDEBD6;color:#1F5C38;font-size:calc(var(--rh)*.46)}td.fin.bus{font-size:calc(var(--rh)*.46);font-weight:400;color:#8a5a00}td.fin.prc{font-size:calc(var(--rh)*.46);font-weight:700;color:#1B2A4A;background:#E8E2C4}
 tr.hl td.d:not(.old){background:#D6E6FF}
 tr.hl td.old{background:#bcc6d6;color:#6f7a8c}
 tr.hl td.pos{background:var(--navy);color:var(--gold)}
@@ -63,7 +63,7 @@ td.hi,tr.hl td.hi,td.old.hi{background:var(--gold)!important;color:var(--navy)!i
  table{--rh:15px}
 }
 </style></head><body>
-<header><div><h1>Seguimiento · La Primera</h1><small>Unidades: dígito más demorado por fila · cuadrado = salió el esperado, ciclo nuevo · tocá una celda para marcarla · se actualiza sola</small></div></header>
+<header><div><h1>Seguimiento · La Primera</h1><small>Unidades: dígito más demorado por fila · cuadrado = salió el que se esperaba · tocá una celda para marcarla · se actualiza sola</small></div></header>
 <div class="wrap">
 <div class="card" id="cu"><div class="tb">
  <div class="ttl">Unidades</div>
@@ -103,21 +103,22 @@ function parse(j){const out=[],s=j&&j.sorteos||{};
 // Por cada posición (fila), de forma independiente: dígito más demorado (sobre TODA la historia).
 // Cuando ese dígito vuelve a salir se completó el ciclo de los 10 dígitos: la marca se borra y
 // se elige el nuevo dígito más demorado.
-// Dígito más demorado de cada posición = el que estamos esperando. Cuando sale, se marca con un cuadrado,
-// se cierra el ciclo y arranca uno nuevo (con su nuevo dígito más demorado). x/10 = dígitos distintos
-// que ya salieron en el ciclo en curso.
+// Búsqueda: identificar el dígito que falta (el más demorado). 9/10 = ya salieron los otros 9 desde la última vez
+// que salió ese dígito. Se calcula cuántos sorteos lleva sin salir. Cuando sale -> cuadrado ("Salió") y se vuelve a buscar.
 function seguimiento(i){const n=data.length;if(n<2)return null;
- const cierres=[];const last={};let seen=new Set(),ult=null;
+ const last={};let ult=null;
  for(let t=0;t<n;t++){const d=data[t].u[i];
-  let tg=null;if(Object.keys(last).length===10){let m=Infinity;for(const x in last)if(last[x]<m){m=last[x];tg=x}}
-  if(tg!==null&&d===tg){cierres.push(data[t].k);ult={t,d};seen=new Set()}   // salió el esperado
-  else seen.add(d);
+  if(Object.keys(last).length===10){let tg=null,m=Infinity;for(const x in last)if(last[x]<m){m=last[x];tg=x}
+   if(d===tg)ult={t,d}}
   last[d]=t}
  let dig=null,L=Infinity;for(const d in last){if(last[d]<L){L=last[d];dig=d}}
+ const sale=ult&&ult.t===n-1;
  if(dig===null||L>=n-1)return null;
- const R={cierres:(ult&&ult.t===n-1)?[data[n-1].k]:[],dig,gap:n-1-L,kDiag:data[L].k,kCirc:data[L+1].k,oldHasta:data[L].k};
- if(ult&&ult.t===n-1){R.estado="Salió "+ult.d+" ✓";R.sal=true}
- else R.estado="En proceso "+seen.size+"/10";
+ const dist=new Set();for(let t=L+1;t<n;t++)dist.add(data[t].u[i]);
+ const R={cierres:sale?[data[n-1].k]:[],dig,gap:n-1-L,kDiag:data[L].k,kCirc:data[L+1].k,oldHasta:data[L].k,x:dist.size};
+ if(sale){R.estado="Salió "+ult.d+" ✓";R.sal=true}
+ else if(Object.keys(last).length<10){R.estado="Búsqueda "+dist.size+"/10";R.proc=false}
+ else{R.estado="En proceso "+dist.size+"/10";R.proc=true}
  return R}
 function rows(f){const a=data.slice();return S[f].newest?a.reverse():a}
 function fill(f){document.querySelector(`[data-f=${f}][data-a=ord]`).textContent=S[f].newest?"Más nueva a la izquierda":"Más nueva a la derecha"}
@@ -135,7 +136,7 @@ function build(f){const r=rows(f),c=S[f],SG=f==="u"?Array.from({length:20},(_,i)
     if(sg.kDiag&&x.k===sg.kDiag){cls+=" diag";inner=`<svg viewBox="0 0 10 10" preserveAspectRatio="none"><line x1="0" y1="10" x2="10" y2="0"/></svg>${inner}`}}
    if(c.marks.includes(id))cls+=" hi";
    return `<td class="${cls}" data-f="${f}" data-m="${id}">${inner}</td>`}).join("");
-  if(f==="u")h+=(sg?`<td class="fin f1" style="right:214px">${sg.dig}</td><td class="fin f2" style="right:130px">${sg.gap}</td><td class="fin f3 ${sg.sal?'sal':'prc'}" style="right:0">${sg.estado}</td>`:`<td class="fin f1" style="right:214px"></td><td class="fin f2" style="right:130px"></td><td class="fin f3" style="right:0"></td>`);
+  if(f==="u")h+=(sg?`<td class="fin f1" style="right:214px">${sg.dig}</td><td class="fin f2" style="right:130px">${sg.gap}</td><td class="fin f3 ${sg.sal?'sal':(sg.proc?'prc':'bus')}" style="right:0">${sg.estado}</td>`:`<td class="fin f1" style="right:214px"></td><td class="fin f2" style="right:130px"></td><td class="fin f3" style="right:0"></td>`);
   h+='</tr>'}
  h+='</tbody></table>';$("t"+f).innerHTML=h;$("n-"+f).textContent=r.length;if(!c.newest)$("t"+f).scrollLeft=$("t"+f).scrollWidth}
 // Cada planilla ocupa una pantalla: las 20 posiciones se ven completas, sin scroll interno.
