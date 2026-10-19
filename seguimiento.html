@@ -63,7 +63,7 @@ td.hi,tr.hl td.hi,td.old.hi{background:var(--gold)!important;color:var(--navy)!i
  table{--rh:15px}
 }
 </style></head><body>
-<header><div><h1>Seguimiento · La Primera</h1><small>Unidades: dígito más demorado por fila · cuadrado = salió el esperado · tocá una celda para marcarla · se actualiza sola</small></div></header>
+<header><div><h1>Seguimiento · La Primera</h1><small>Unidades: dígito más demorado por fila · cuadrado = salió el esperado, ciclo nuevo · tocá una celda para marcarla · se actualiza sola</small></div></header>
 <div class="wrap">
 <div class="card" id="cu"><div class="tb">
  <div class="ttl">Unidades</div>
@@ -103,19 +103,19 @@ function parse(j){const out=[],s=j&&j.sorteos||{};
 // Por cada posición (fila), de forma independiente: dígito más demorado (sobre TODA la historia).
 // Cuando ese dígito vuelve a salir se completó el ciclo de los 10 dígitos: la marca se borra y
 // se elige el nuevo dígito más demorado.
-// Dígito más demorado de cada posición (candidato a ser el último que falta) + progreso del ciclo.
-// Ciclo = hasta que salieron los 10 dígitos en esa posición; el que sale último lo cierra (cuadrado)
-// y el ciclo siguiente arranca de cero.
+// Dígito más demorado de cada posición = el que estamos esperando. Cuando sale, se marca con un cuadrado,
+// se cierra el ciclo y arranca uno nuevo (con su nuevo dígito más demorado). x/10 = dígitos distintos
+// que ya salieron en el ciclo en curso.
 function seguimiento(i){const n=data.length;if(n<2)return null;
- // ciclos
- const cierres=[];let seen=new Set(),ult=null;
- for(let t=0;t<n;t++){const d=data[t].u[i];seen.add(d);
-  if(seen.size===10){cierres.push(data[t].k);ult={t,d};seen=new Set()}}
- // más demorado (sobre toda la historia)
- const last={};data.forEach((r,t)=>{last[r.u[i]]=t});
+ const cierres=[];const last={};let seen=new Set(),ult=null;
+ for(let t=0;t<n;t++){const d=data[t].u[i];
+  let tg=null;if(Object.keys(last).length===10){let m=Infinity;for(const x in last)if(last[x]<m){m=last[x];tg=x}}
+  if(tg!==null&&d===tg){cierres.push(data[t].k);ult={t,d};seen=new Set()}   // salió el esperado
+  else seen.add(d);
+  last[d]=t}
  let dig=null,L=Infinity;for(const d in last){if(last[d]<L){L=last[d];dig=d}}
  if(dig===null||L>=n-1)return null;
- const R={cierres,dig,gap:n-1-L,kDiag:data[L].k,kCirc:data[L+1].k,oldHasta:data[L].k};
+ const R={cierres:(ult&&ult.t===n-1)?[data[n-1].k]:[],dig,gap:n-1-L,kDiag:data[L].k,kCirc:data[L+1].k,oldHasta:data[L].k};
  if(ult&&ult.t===n-1){R.estado="Salió "+ult.d+" ✓";R.sal=true}
  else R.estado="En proceso "+seen.size+"/10";
  return R}
