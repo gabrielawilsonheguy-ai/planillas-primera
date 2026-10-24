@@ -1,0 +1,1 @@
+{"name": "Análisis · La Primera", "short_name": "Análisis", "start_url": "./analisis.html", "scope": "./", "id": "./analisis.html", "display": "standalone", "background_color": "#E8E6DF", "theme_color": "#1B2A4A", "icons": [{"src": "icons/ana-192.png", "sizes": "192x192", "type": "image/png"}, {"src": "icons/ana-512.png", "sizes": "512x512", "type": "image/png"}]}

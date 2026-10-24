@@ -65,7 +65,7 @@ td.hi,tr.hl td.hi,td.old.hi{background:var(--gold)!important;color:var(--navy)!i
  table{--rh:15px}
 }
 </style></head><body>
-<header><div><h1>Seguimiento · La Primera</h1><small>Unidades: dígito más demorado por fila · cuadrado = salió el que se esperaba · tocá una celda para marcarla · naranja = en Análisis (67 sorteos sin salir) · se actualiza sola</small></div><button class="btn" id="sy-btn" style="margin-left:auto">☁ Sincronizar</button></header>
+<header><div><h1>Seguimiento · La Primera</h1><small>Unidades: dígito más demorado por fila · cuadrado = salió el que se esperaba · tocá una celda para marcarla · naranja = en Análisis (67 sorteos sin salir) · se actualiza sola</small></div><a class="btn" href="analisis.html" style="margin-left:auto;text-decoration:none">Análisis ›</a><button class="btn" id="sy-btn">☁ Sincronizar</button></header>
 <div id="sync" class="wrap" hidden style="padding-bottom:0"><div class="card" style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:6px">
  <div id="sy-off"><div class="tb"><div style="flex:2;min-width:230px"><label>Dirección de la base (Firebase)</label><input id="sy-url" placeholder="https://xxxx-default-rtdb.firebaseio.com" style="width:100%;font-size:13px;padding:5px"></div>
  <div style="flex:2;min-width:200px"><label>Código secreto (el mismo en todos tus aparatos)</label><input id="sy-code" placeholder="pegá el código" style="width:100%;font-size:13px;padding:5px"></div>
@@ -89,47 +89,22 @@ td.hi,tr.hl td.hi,td.old.hi{background:var(--gold)!important;color:var(--navy)!i
  
 </div><div class="pt" id="pt-d"></div><div class="scroll" id="td"></div></div>
 </div>
+<script src="lw-core.js"></script>
 <script>
-const URL_DATA="https://gabrielawilsonheguy-ai.github.io/quiniela-bolillero/data/resultados.json";
+const URL_DATA=LW.URL_DATA;
 const CK="lw:planillas-cache-v1",SK="lw:seguimiento-v2";
 const $=id=>document.getElementById(id);
 const g=k=>{try{return localStorage.getItem(k)}catch(e){return null}},st=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
-const fmt=iso=>{const[a,b,c]=iso.split("-");return c+"/"+b+"/"+a};
-let data=[];const LIM=67;   // sorteos sin salir para entrar en etapa de Análisis
+const fmt=LW.fmt;
+let data=[];
 const def=()=>({newest:false,marks:[]});
 let S={u:def(),d:def()};
 try{const x=JSON.parse(g(SK)||"null");if(x){for(const f of["u","d"]){if(x[f]){S[f].newest=!!x[f].newest;S[f].marks=Array.isArray(x[f].marks)?x[f].marks:[]}}}}catch(e){}
 let HL={u:-1,d:-1};
 const save=()=>st(SK,JSON.stringify(S));
 const NAMES={u:"Unidades",d:"Decenas"};
-function parse(j){const out=[],s=j&&j.sorteos||{};
- for(const iso of Object.keys(s)){const p=s[iso]&&s[iso].primera;
-  if(Array.isArray(p)&&p.length===20&&p.every(x=>/^\d{4}$/.test(x)))
-   out.push({k:iso,f:fmt(iso),u:p.map(x=>x[3]).join(""),d:p.map(x=>x[2]).join("")})}
- return out.sort((a,b)=>a.k.localeCompare(b.k))}   // viejo -> nuevo
-// Por cada posición (fila), de forma independiente: dígito más demorado (sobre TODA la historia).
-// Cuando ese dígito vuelve a salir se completó el ciclo de los 10 dígitos: la marca se borra y
-// se elige el nuevo dígito más demorado.
-// Búsqueda: identificar el dígito que falta (el más demorado). 9/10 = ya salieron los otros 9 desde la última vez
-// que salió ese dígito. Se calcula cuántos sorteos lleva sin salir. Cuando sale -> cuadrado ("Salió") y se vuelve a buscar.
-function seguimiento(i,f){f=f||"u";const n=data.length;if(n<2)return null;
- const last={};let ult=null;
- for(let t=0;t<n;t++){const d=data[t][f][i];
-  if(Object.keys(last).length===10){let tg=null,m=Infinity;for(const x in last)if(last[x]<m){m=last[x];tg=x}
-   if(d===tg)ult={t,d,Lp:last[d]}}
-  last[d]=t}
- let dig=null,L=Infinity;for(const d in last){if(last[d]<L){L=last[d];dig=d}}
- const sale=ult&&ult.t===n-1;
- if(dig===null||L>=n-1)return null;
- const dist=new Set();for(let t=L+1;t<n;t++)dist.add(data[t][f][i]);
- const R={cierres:sale?[data[n-1].k]:[],dig,gap:n-1-L,kDiag:data[L].k,kCirc:data[L+1].k,oldHasta:data[L].k,x:dist.size};
- if(sale){R.estado="Salió "+ult.d+" ✓";R.sal=true;
-  // se muestra el ciclo que acaba de cerrarse: el dígito que salió y cuánto tardó (la fila pasa al nuevo dígito en el sorteo siguiente)
-  R.dig=ult.d;R.gap=ult.t-ult.Lp-1;R.kDiag=data[ult.Lp].k;R.kCirc=data[ult.Lp+1].k;R.oldHasta=R.kDiag}
- else if(Object.keys(last).length<10){R.estado="Búsqueda "+dist.size+"/10";R.proc=false}
- else if(R.gap>=LIM){R.estado="Análisis";R.ana=true}
- else{R.estado="En proceso "+dist.size+"/10";R.proc=true}
- return R}
+const parse=LW.parse;
+function seguimiento(i,f){return LW.seguimiento(data,i,f)}
 function rows(f){const a=data.slice();return S[f].newest?a.reverse():a}
 function fill(f){document.querySelector(`[data-f=${f}][data-a=ord]`).textContent=S[f].newest?"Más nueva a la izquierda":"Más nueva a la derecha"}
 function build(f){const r=rows(f),c=S[f],SG=Array.from({length:20},(_,i)=>seguimiento(i,f));
