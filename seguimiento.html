@@ -13,6 +13,7 @@
 :root{--navy:#1B2A4A;--gold:#C9A84C;--bg:#E8E6DF;--card:#F5F3EE;--line:#D8D4C8;--red:#C0392B;--rh:24px}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--navy);font-family:-apple-system,Segoe UI,Roboto,sans-serif}
+header .btn,header label{flex:none;white-space:nowrap}
 header{background:var(--navy);color:#fff;padding:6px 14px;border-bottom:3px solid var(--gold);display:flex;align-items:center;gap:12px}
 h1{font:700 17px Georgia,serif;margin:0}
 header small{color:#cfd6e6;font-size:11px}
@@ -65,7 +66,7 @@ td.hi,tr.hl td.hi,td.old.hi{background:var(--gold)!important;color:var(--navy)!i
  table{--rh:15px}
 }
 </style></head><body>
-<header><div><h1>Seguimiento · La Primera</h1><small>Unidades: dígito más demorado por fila · cuadrado = salió el que se esperaba · tocá una celda para marcarla · naranja = en Análisis (67 sorteos sin salir) · se actualiza sola</small></div><a class="btn" href="analisis.html" style="margin-left:auto;text-decoration:none">Análisis ›</a><button class="btn" id="sy-btn">☁ Sincronizar</button></header>
+<header><div><h1>Seguimiento · La Primera</h1><small>Unidades: dígito más demorado por fila · cuadrado = salió el que se esperaba · tocá una celda para marcarla · naranja = en Análisis (67 sorteos sin salir) · se actualiza sola</small></div><label style="margin-left:auto;font-size:12px;color:#fff;cursor:pointer;white-space:nowrap;background:#2c3e66;border:1px solid #C9A84C;border-radius:8px;padding:5px 9px"><input type="checkbox" id="r3" style="vertical-align:-2px"> Aplicar regla 3</label><a class="btn" href="analisis.html" style="text-decoration:none">Análisis ›</a><button class="btn" id="sy-btn">☁ Sincronizar</button></header>
 <div id="sync" class="wrap" hidden style="padding-bottom:0"><div class="card" style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:6px">
  <div id="sy-off"><div class="tb"><div style="flex:2;min-width:230px"><label>Dirección de la base (Firebase)</label><input id="sy-url" placeholder="https://xxxx-default-rtdb.firebaseio.com" style="width:100%;font-size:13px;padding:5px"></div>
  <div style="flex:2;min-width:200px"><label>Código secreto (el mismo en todos tus aparatos)</label><input id="sy-code" placeholder="pegá el código" style="width:100%;font-size:13px;padding:5px"></div>
@@ -179,6 +180,7 @@ $("sy-info").onclick=()=>prompt("Copiá este código. En tu otro aparato, pegá 
 $("sy-out").onclick=()=>{if(confirm("¿Desconectar? Las marcas siguen en este aparato y en la nube.")){st(YK,"null");yui()}};
 yui();
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)ypull()});setInterval(()=>{if(!document.hidden)ypull()},45000);
+$("r3").checked=LW.reglas.r3;$("r3").onchange=()=>{LW.setR3($("r3").checked);render()};
 cargar().then(ypull);
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script></body></html>

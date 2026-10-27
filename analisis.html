@@ -42,6 +42,7 @@ td.f.rj{background:#FBD5D0;color:var(--red)}td.f.ok{background:#CDEBD6;color:#1F
 .met{margin-top:10px;font-size:12px;color:#444;line-height:1.55}
 
 .sec2{margin-top:22px}
+.sw{display:inline-block;margin:6px 0 2px;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:5px 10px;cursor:pointer}.sw input{vertical-align:-2px;margin-right:6px}
 td.jg1{min-width:46px;padding:3px 3px;font-size:15px;font-weight:700;background:#fff;color:#555}
 td.jg1 small{display:block;font:10px -apple-system,Segoe UI,Roboto,sans-serif;font-weight:400;line-height:1.2}
 td.jg1.pas{background:#eee;color:#aaa}td.jg1.nx{background:var(--gold);color:var(--navy);outline:2px solid var(--navy)}td.jg1.hit{background:#CDEBD6;color:#1F5C38}
@@ -53,6 +54,7 @@ td.t{padding:6px 10px;font:14px "Courier New",monospace}
 <header><div><h1>Análisis · La Primera</h1><small>filas (Unidades y Decenas) cuyo dígito esperado llegó a 67 sorteos sin salir · se calculan solas con los resultados</small></div><a class="btn" href="seguimiento.html">‹ Seguimiento</a></header>
 <div class="wrap">
  <div class="sec">LA PRIMERA</div>
+ <label class="sw"><input type="checkbox" id="r3"> Aplicar regla de oro 3 (cancela si los <b>5 primeros sorteos</b> del análisis son 5 dígitos distintos)</label>
  <div class="sub">Unidades <span id="est"></span></div>
  <div class="box"><div id="lista-u"></div></div>
  <div id="calc-u"></div>
@@ -64,7 +66,7 @@ td.t{padding:6px 10px;font:14px "Courier New",monospace}
  <div id="calc-d"></div>
  <div class="sec2"><div class="sub" style="font-size:14px">Análisis cerrados · Decenas</div>
  <div class="box"><div id="cerr-d"></div></div></div>
- <div class="met"><b>Método.</b> Arranque = sorteo siguiente a la última salida del dígito más atrasado (Y = 1). Cada dígito distinto nuevo ocupa el lugar X (1º a 10º) y tiene α = log(Y) ÷ log(X); el 1º tiene α = 1. Se cancela si algún α ≥ 2, si algún α &lt; 1, o si salen 5 distintos seguidos. Al salir el 9º distinto: f(α) = (2 − α) ÷ α + α, aplicada 3 veces seguidas desde α máx; Y = 10<sup>α10 virtual</sup> (entre 10 y 100, redondeado hacia arriba). Ventana de juego: del sorteo Y−11 al Y, al dígito que falta, en La Primera · Unidad o Decena · esa posición. Cuando un análisis termina (se cancela, termina la ventana sin salir, o sale el dígito), Seguimiento pasa al siguiente dígito más demorado de esa fila; el dígito descartado vuelve a contar cuando sale.</div>
+ <div class="met"><b>Método.</b> Arranque = sorteo siguiente a la última salida del dígito más atrasado (Y = 1). Cada dígito distinto nuevo ocupa el lugar X (1º a 10º) y tiene α = log(Y) ÷ log(X); el 1º tiene α = 1. Se cancela si algún α ≥ 2 o si algún α &lt; 1. La regla 3 (los 5 primeros sorteos del análisis son 5 dígitos distintos) se puede activar o desactivar con el interruptor de arriba; por defecto no se aplica. Al salir el 9º distinto: f(α) = (2 − α) ÷ α + α, aplicada 3 veces seguidas desde α máx; Y = 10<sup>α10 virtual</sup> (entre 10 y 100, redondeado hacia arriba). Ventana de juego: de 11 sorteos: del sorteo Y−10 al Y, al dígito que falta, en La Primera · Unidad o Decena · esa posición. Cuando un análisis termina (se cancela, termina la ventana sin salir, o sale el dígito), Seguimiento pasa al siguiente dígito más demorado de esa fila; el dígito descartado vuelve a contar cuando sale.</div>
 </div>
 <script src="lw-core.js"></script>
 <script>
@@ -90,9 +92,9 @@ function celdas(r){let h="";const A=r.A;
   else if(x===10)h+=`<td class="c ${r.salio?'ok':'fa'}">${r.dig}<small>${r.salio?'salió<br>sorteo '+r.Ys:'falta<br>&nbsp;'}</small></td>`;
   else h+=`<td class="c fa">&nbsp;<small>&nbsp;<br>&nbsp;</small></td>`}
  return h}
-// Jugada: una celda por sorteo de la ventana (Y−11 … Y). El valor a jugar en cada sorteo está por definir.
+// Jugada: una celda por sorteo de la ventana (11 sorteos: Y−10 … Y). El valor a jugar en cada sorteo está por definir.
 function jugada(r){const A=r.A;let h="";
- if(A.v1===undefined)return `<td class="jg1 vac" colspan="${12}">se define al salir el 9º distinto</td>`;
+ if(A.v1===undefined)return `<td class="jg1 vac" colspan="${11}">se define al salir el 9º distinto</td>`;
  for(let y=A.v1;y<=A.v2;y++){let c="jg1",sub="valor —";
   if(r.salio&&y===r.Ys){c+=" hit";sub="salió ✓"}
   else if(y<=A.Yact){c+=" pas";sub="pasó"}
@@ -110,11 +112,11 @@ function render1(f){
  else{
  let h='<table><thead><tr><th class="p">Pos</th><th>Dígito<br>faltante</th>';
  for(let x=1;x<=10;x++)h+=`<th>${x}º</th>`;
- h+='<th class="fin">α máx</th><th class="fin">Reglas<br>de oro</th><th class="fin">Y proy. /<br>ventana</th><th class="fin" colspan="12">Jugada · sorteos de la ventana (valor por definir)</th><th class="fin">Estado</th></tr></thead><tbody>';
+ h+='<th class="fin">α máx</th><th class="fin">Reglas<br>de oro</th><th class="fin">Y proy. /<br>ventana</th><th class="fin" colspan="11">Jugada · sorteos de la ventana (valor por definir)</th><th class="fin">Estado</th></tr></thead><tbody>';
  let C="";
  for(const r of R){const A=r.A,e=estado(r);
   h+=`<tr><td class="pos">${P(r.pos)}</td><td class="dg">${r.dig}</td>`+celdas(r)+
-   `<td class="f">${n2(A.amax)}</td><td class="f ok">OK</td>`+
+   `<td class="f">${n2(A.amax)}</td><td class="f ok">OK${LW.reglas.r3?"":"<br><small style=\"font-weight:400\">regla 3 no aplica</small>"}</td>`+
    `<td class="f">${A.v1!==undefined?"Y "+A.Y+"<br>sorteos "+A.v1+" a "+A.v2+"<br>hoy: "+A.Yact:"—<br>hoy: "+A.Yact}</td>`+jugada(r)+
    `<td class="f ${e.c}">${e.t}</td></tr>`;
   if(A.cad)C+=`<div><b>Pos ${P(r.pos)}</b> (dígito ${r.dig}): α máx = ${n3(A.cad[0])} → f = ${n3(A.cad[1])} → f = ${n3(A.cad[2])} → f = ${n3(A.cad[3])} (α10 virtual) → Y = 10<sup>${n3(A.cad[3])}</sup> = ${A.yraw.toFixed(1)} → <b>${A.Y}</b> · ventana de juego: sorteos <b>${A.v1} a ${A.v2}</b> · arranque ${fmt(r.arr)}</div>`;
@@ -127,7 +129,7 @@ function render1(f){
  else $("cerr-"+f).innerHTML='<table><thead><tr><th class="p">Pos</th><th>Dígito</th><th>Arranque</th><th>Cerró</th><th>Resultado</th><th>Motivo</th></tr></thead><tbody>'+
   Cer.map(c=>{const A=c.A;let res,mot,cl;
    if(c.tipo==="canc"){cl="tipo-canc";res="Cancelado";const k=A.canc;
-    mot=k.regla===3?`Regla de oro 3: salieron 5 dígitos distintos seguidos (${k.it.map(z=>z.d).join("·")}, sorteos ${k.it[0].y} a ${k.it[k.it.length-1].y}). Se detectó al llegar a ${c.Yc} sorteos sin salir.`
+    mot=k.regla===3?`Regla de oro 3: los 5 primeros sorteos fueron 5 dígitos distintos (${k.it.map(z=>z.d).join("·")}, sorteos ${k.it[0].y} a ${k.it[k.it.length-1].y}). Se detectó al llegar a ${c.Yc} sorteos sin salir.`
      :k.regla===1?`Regla de oro 1: α llegó a 2 en el sorteo ${k.y} (dígito ${k.it[0].d}, ${k.it[0].x}º distinto, α ${n2(k.it[0].a)}).`
      :`Regla de oro 2: α menor que 1 en el sorteo ${k.y}.`}
    else if(c.tipo==="ventana"){cl="tipo-v";res="Ventana cerrada";mot=`Terminó la ventana (sorteos ${A.v1} a ${A.v2}) sin que saliera el ${c.dig}.`}
@@ -140,6 +142,7 @@ async function cargar(){$("est").textContent="· actualizando…";
  catch(e){let c=null;try{c=JSON.parse(g(CK))}catch(x){}
   if(c){data=LW.parse(c.j);$("est").textContent="· sin conexión, última copia"}else{data=[];$("est").textContent="· no se pudo leer la base"}}
  render()}
+$("r3").checked=LW.reglas.r3;$("r3").onchange=()=>{LW.setR3($("r3").checked);render()};
 cargar();setInterval(()=>{if(!document.hidden)cargar()},120000);
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
