@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ANÁLISIS Beta · La Primera</title>
+<meta name="theme-color" content="#1B2A4A">
+<link rel="manifest" href="manifest-beta.json">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/beta-32.png">
+<link rel="apple-touch-icon" href="icons/beta-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ANÁLISIS β">
+<style>
+:root{--navy:#1B2A4A;--gold:#C9A84C;--bg:#E8E6DF;--card:#F5F3EE;--line:#D8D4C8;--org:#F4A340;--red:#B03A2E}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--navy);font-family:-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:var(--navy);color:#fff;padding:6px 14px;border-bottom:3px solid var(--gold);display:flex;align-items:center;gap:12px}
+h1{font:700 17px Georgia,serif;margin:0}
+header small{color:#cfd6e6;font-size:11px}
+.wrap{padding:10px 12px}
+.btn{border:1px solid var(--navy);background:var(--card);color:var(--navy);padding:5px 10px;border-radius:8px;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block}
+header .btn{margin-left:auto}
+.sec{font:700 21px Georgia,serif;letter-spacing:1px;margin:4px 0 0}
+.sub{font:700 16px Georgia,serif;color:#555;margin:6px 0}#est{font:400 12px sans-serif}
+.box{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:auto}
+table{border-collapse:separate;border-spacing:0;font-family:"Courier New",monospace;text-align:center}
+th,td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);white-space:nowrap}
+thead th{background:var(--navy);color:#fff;font:700 12px -apple-system,Segoe UI,Roboto,sans-serif;padding:6px 8px}
+thead th.p{color:var(--gold)}
+th.fin{background:var(--gold)!important;color:var(--navy)!important}
+td.pos{background:var(--org);color:#4A2300;font-weight:700;font-size:19px;padding:6px 12px}
+td.dg{background:#FBF3D9;font-weight:700;font-size:20px;padding:0 12px}
+td.c{min-width:78px;padding:3px 4px;font-size:21px;font-weight:700;background:#FBF3D9}
+td.c small{display:block;font:11px -apple-system,Segoe UI,Roboto,sans-serif;font-weight:400;line-height:1.25}
+td.c.rj{background:#FBD5D0}
+td.c.fa{background:#fff;color:#aaa;border:1px dashed #aaa}
+td.c.ok{background:#CDEBD6;color:#1F5C38}
+td.f{background:#FBF3D9;font:700 12px -apple-system,Segoe UI,Roboto,sans-serif;padding:0 9px;white-space:normal;min-width:96px}
+td.f.rj{background:#FBD5D0;color:var(--red)}td.f.ok{background:#CDEBD6;color:#1F5C38}td.f.jg{background:var(--gold);color:var(--navy);font-size:13px}
+.vac{padding:26px 12px;text-align:center;color:#555;font-size:14px}
+.calc{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px;line-height:1.6}
+.calc b.t{font:700 14px Georgia,serif}.calc code{font-family:"Courier New",monospace}
+.met{margin-top:10px;font-size:12px;color:#444;line-height:1.55}
+
+.sec2{margin-top:22px}
+.sw{display:inline-block;margin:6px 0 2px;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:5px 10px;cursor:pointer}.sw input{vertical-align:-2px;margin-right:6px}
+td.jg1{min-width:46px;padding:3px 3px;font-size:15px;font-weight:700;background:#fff;color:#555}
+td.jg1 small{display:block;font:10px -apple-system,Segoe UI,Roboto,sans-serif;font-weight:400;line-height:1.2}
+td.jg1.pas{background:#eee;color:#aaa}td.jg1.nx{background:var(--gold);color:var(--navy);outline:2px solid var(--navy)}td.jg1.hit{background:#CDEBD6;color:#1F5C38}
+td.jg1.vac{background:#fafafa;color:#ccc}
+td.mot{text-align:left;white-space:normal;min-width:340px;padding:6px 10px;font:13px -apple-system,Segoe UI,Roboto,sans-serif}
+td.t{padding:6px 10px;font:14px "Courier New",monospace}
+.tipo-canc{color:var(--red);font-weight:700}.tipo-ok{color:#1F5C38;font-weight:700}.tipo-v{color:#8a5a00;font-weight:700}
+
+td.c{min-width:92px;font-size:20px}
+td.c .b{color:#B03A2E;font-weight:600}
+td.jg1{min-width:56px}
+.det{margin:6px 0}.det summary{cursor:pointer;font:700 13px sans-serif;padding:4px 0}
+.gr{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:auto;padding:6px;max-height:80vh}
+.gr svg{display:block}
+</style></head><body>
+<header><div><h1>β ANÁLISIS Beta · La Primera</h1><small>filas (Unidades y Decenas) cuyo dígito esperado llegó a 67 sorteos sin salir · método α y β (Manual BETA)</small></div><a class="btn" href="seguimiento.html">‹ Seguimiento</a></header>
+<div class="wrap">
+ <div class="sec">LA PRIMERA</div>
+ <label class="sw"><input type="checkbox" id="r3"> Aplicar regla de oro 3 (cancela si los <b>5 primeros sorteos</b> del análisis son 5 dígitos distintos)</label>
+ <div class="sub">Unidades <span id="est"></span></div>
+ <div class="box"><div id="lista-u"></div></div>
+ <div id="calc-u"></div>
+ <div class="sec2"><div class="sub" style="font-size:14px">Análisis cerrados · Unidades</div>
+ <div class="box"><div id="cerr-u"></div></div></div>
+ <div style="height:26px"></div>
+ <div class="sub">Decenas</div>
+ <div class="box"><div id="lista-d"></div></div>
+ <div id="calc-d"></div>
+ <div class="sec2"><div class="sub" style="font-size:14px">Análisis cerrados · Decenas</div>
+ <div class="box"><div id="cerr-d"></div></div></div>
+ <div class="met"><b>Método BETA.</b> Arranque = sorteo siguiente a la última salida del dígito más atrasado (Y = 1). Cada dígito distinto nuevo ocupa el lugar X y tiene α = log(Y) ÷ log(X); el 1º tiene α = 1 (el 9º también por log). β N = log(sorteo del último repetido antes del nuevo distinto) ÷ log(N); solo existe si hubo repetidos. Se cancela si algún α ≥ 2 o α &lt; 1 (regla 3 opcional con el interruptor). Al salir el 9º distinto: β máx = el mayor β; f(β) = (2 − β) ÷ β + β, tres veces seguidas (β 8 virtual = β 9 máx → β 9 virtual = β 10 máx → β 10 virtual); Y = 10<sup>β 10 virtual</sup> redondeado hacia arriba. Ventana de juego: 11 sorteos, del Y−11 al Y−1 (el Y no se juega). Paga 7 veces lo apostado. Esta app es independiente del Análisis actual.</div>
+</div>
+<script src="beta-core.js"></script>
+<script>
+const URL_DATA=LB.URL_DATA,CK="lw:planillas-cache-v1",LIM=LB.LIM;
+const $=id=>document.getElementById(id);
+const g=k=>{try{return localStorage.getItem(k)}catch(e){return null}},st=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const fmt=LB.fmt;
+const n5=x=>x.toFixed(5).replace(".",","),mon=x=>x.toLocaleString("es-AR");
+const fc=k=>{const[a,b,c]=k.split("-");return c+"/"+b+"/"+a.slice(2)};
+const P=i=>String(i+1).padStart(2,"0");
+let data=[],OPEN=new Set();window.tg=k=>{OPEN.has(k)?OPEN.delete(k):OPEN.add(k);render()};
+function estado(r){const A=r.A;
+ if(r.salio)return{t:A.v1===undefined?"Salió "+r.dig+" ✓ antes del 9º":"Salió "+r.dig+" ✓ "+(r.dentro?"dentro":"fuera")+" de la ventana",c:"ok"};
+ if(A.sinB)return{t:"9º distinto salió, pero no hay ningún β (a definir)",c:"rj"};
+ if(A.v1===undefined)return{t:"Esperando 9º distinto ("+A.nd+"/9)",c:""};
+ const nx=A.Yact+1;
+ if(nx<A.v1)return{t:"Esperando ventana: faltan "+(A.v1-nx)+" sorteos",c:""};
+ if(nx<=A.v2)return{t:"JUGAR el "+r.dig,c:"jg"};
+ return{t:"Ventana cerrada",c:"rj"}}
+function celdas(r){let h="";const A=r.A;
+ for(let x=1;x<=10;x++){const z=A.D[x-1];
+  if(z){const b=A.B.find(q=>q.N===x);
+   h+=`<td class="c${z.rj?' rj':''}">${z.d}<small>sorteo ${z.y} · ${fc(data[r.L+z.y].k)}<br>α ${x} = ${n5(z.a)}${b?`<br><span class="b">β ${x} = ${n5(b.b)}<br>(sorteo ${b.S})</span>`:""}</small></td>`}
+  else if(x===10)h+=`<td class="c ${r.salio?'ok':'fa'}">${r.dig}<small>${r.salio?'salió<br>sorteo '+r.Ys:'falta<br>&nbsp;'}</small></td>`;
+  else h+=`<td class="c fa">&nbsp;<small>&nbsp;<br>&nbsp;</small></td>`}
+ return h}
+function jugada(r){const A=r.A;let h="";
+ if(A.v1===undefined)return `<td class="jg1 vac" colspan="11">${A.sinB?"sin β: Y por definir":"se define al salir el 9º distinto"}</td>`;
+ for(let y=A.v1;y<=A.v2;y++){let c="jg1",sub="";const s=mon(LB.stakeY(A,y));
+  if(r.salio&&y===r.Ys){c+=" hit";sub="salió ✓"}
+  else if(y<=A.Yact){c+=" pas";sub="pasó"}
+  else if(y===A.Yact+1&&!r.salio){c+=" nx";sub="próximo"}
+  h+=`<td class="${c}">${y}<small>$ ${s}<br>${sub}</small></td>`}
+ return h}
+// Curva suave monótona (PCHIP) que une los β
+function pchip(xs,ys){const n=xs.length,h=[],d=[];for(let i=0;i<n-1;i++){h.push(xs[i+1]-xs[i]);d.push((ys[i+1]-ys[i])/h[i])}
+ const m=new Array(n).fill(0);
+ if(n===2){m[0]=m[1]=d[0]}else{
+  for(let i=1;i<n-1;i++){if(d[i-1]*d[i]>0){const w1=2*h[i]+h[i-1],w2=h[i]+2*h[i-1];m[i]=(w1+w2)/(w1/d[i-1]+w2/d[i])}}
+  const ends=(h0,h1,d0,d1)=>{let v=((2*h0+h1)*d0-h0*d1)/(h0+h1);if(Math.sign(v)!==Math.sign(d0))v=0;else if(Math.sign(d0)!==Math.sign(d1)&&Math.abs(v)>3*Math.abs(d0))v=3*d0;return v};
+  m[0]=ends(h[0],h[1],d[0],d[1]);m[n-1]=ends(h[n-2],h[n-3],d[n-2],d[n-3])}
+ return x=>{let i=0;while(i<n-2&&x>xs[i+1])i++;const t=(x-xs[i])/h[i],t2=t*t,t3=t2*t;
+  return(2*t3-3*t2+1)*ys[i]+(t3-2*t2+t)*h[i]*m[i]+(-2*t3+3*t2)*ys[i+1]+(t3-t2)*h[i]*m[i+1]}}
+// Gráfico de escalera: misma escala en X e Y (α = 1 a 45°)
+function grafico(r){const A=r.A,u=9,ml=46,mt=24,mr=210,mb=70;
+ const ymax=Math.max(A.Yact,...A.D.map(z=>z.y))+4,xmax=10,top=Math.ceil(ymax/5)*5;
+ const W=ml+xmax*u+mr,H=mt+top*u+mb,X=x=>ml+x*u,Y=y=>mt+(top-y)*u;
+ let s=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" font-family="sans-serif">`;
+ s+=`<text x="${ml}" y="14" font-size="11" font-weight="700" fill="#1B2A4A">Pos ${P(r.pos)} · dígito faltante ${r.dig} (misma escala en X e Y)</text>`;
+ for(let y=0;y<=top;y++){const m=y%5===0;s+=`<line x1="${ml}" x2="${X(xmax)}" y1="${Y(y)}" y2="${Y(y)}" stroke="${m?'#ccc':'#eee'}"/>`;if(m)s+=`<text x="${ml-5}" y="${Y(y)+3}" font-size="9" text-anchor="end" fill="#555">${y}</text>`}
+ for(let x=0;x<=xmax;x++){s+=`<line y1="${Y(0)}" y2="${Y(top)}" x1="${X(x)}" x2="${X(x)}" stroke="#ddd"/>`;if(x>=1)s+=`<text x="${X(x)}" y="${Y(0)+12}" font-size="9" text-anchor="middle" fill="#555">${x}º</text>`}
+ s+=`<line x1="${X(0)}" x2="${X(0)}" y1="${Y(0)}" y2="${Y(top)}" stroke="#555"/><line x1="${X(0)}" x2="${X(xmax)}" y1="${Y(0)}" y2="${Y(0)}" stroke="#555"/>`;
+ s+=`<text x="${ml+xmax*u/2}" y="${Y(0)+26}" font-size="10" text-anchor="middle" fill="#333">X · n° distinto</text>`;
+ s+=`<text transform="translate(10,${mt+top*u/2}) rotate(-90)" font-size="10" text-anchor="middle" fill="#333">Y · sorteo</text>`;
+ // referencias Y=X (piso) e Y=X² (cancela)
+ s+=`<line x1="${X(1)}" y1="${Y(1)}" x2="${X(Math.min(xmax,top))}" y2="${Y(Math.min(xmax,top))}" stroke="#7a8296" stroke-dasharray="4 3"/>`;
+ let pp="";for(let x=1;x<=xmax+1e-9;x+=0.1){const y=x*x;if(y>top)break;pp+=(pp?"L":"M")+X(x)+","+Y(y)}
+ s+=`<path d="${pp}" fill="none" stroke="#B03A2E" stroke-dasharray="4 3"/>`;
+ // escalera
+ const D=A.D;let pts=[[1,D[0].y]];
+ for(let i=1;i<D.length;i++){const prev=D[i-1],cur=D[i];if(cur.y-1>prev.y)pts.push([i,cur.y-1]);pts.push([i+1,cur.y])}
+ const lp=pts.map(p=>X(p[0])+","+Y(p[1])).join(" ");
+ s+=`<polyline points="${lp}" fill="none" stroke="#1B2A4A" stroke-width="2"/>`;
+ const ld=D[D.length-1];
+ if(!r.salio&&A.Yact>ld.y)s+=`<line x1="${X(ld.x)}" x2="${X(ld.x)}" y1="${Y(ld.y)}" y2="${Y(A.Yact)}" stroke="#1B2A4A" stroke-width="2" stroke-dasharray="3 3"/>`;
+ // línea punteada dorada en el sorteo del último distinto
+ s+=`<line x1="${X(0)}" x2="${X(xmax)}" y1="${Y(ld.y)}" y2="${Y(ld.y)}" stroke="#C9A84C" stroke-dasharray="2 3"/><text x="${X(xmax)+4}" y="${Y(ld.y)+14}" font-size="9" fill="#a8861f">sorteo ${ld.y} (último distinto)</text>`;
+ // curva β
+ if(A.B.length>=2){const f=pchip(A.B.map(b=>b.N),A.B.map(b=>b.S));let cp="";const x0=A.B[0].N,x1=A.B[A.B.length-1].N;
+  for(let x=x0;x<=x1+1e-9;x+=0.05)cp+=(cp?"L":"M")+X(x)+","+Y(f(x));
+  s+=`<path d="${cp}" fill="none" stroke="#1F7A5C" stroke-width="2"/>`}
+ // alfas (dorado) y betas (rojo)
+ for(const z of D){s+=`<circle cx="${X(z.x)}" cy="${Y(z.y)}" r="3.6" fill="#C9A84C" stroke="#1B2A4A"/>`;
+  s+=`<text x="${X(z.x)+7}" y="${Y(z.y)+3}" font-size="9" fill="#1B2A4A">α ${z.x} = ${n5(z.a)}${z.x===9?" (9º: dispara)":""}</text>`}
+ for(const b of A.B){s+=`<circle cx="${X(b.N)}" cy="${Y(b.S)}" r="3.6" fill="#fff" stroke="#B03A2E" stroke-width="1.6"/>`;
+  s+=`<text x="${X(b.N)-7}" y="${Y(b.S)-9}" font-size="9" text-anchor="end" fill="#B03A2E">sorteo ${b.S}</text><text x="${X(b.N)-7}" y="${Y(b.S)+1}" font-size="9" text-anchor="end" fill="#B03A2E">β ${b.N} = ${n5(b.b)}</text>`}
+ // leyenda
+ const ly=Y(0)+40;
+ s+=`<g font-size="9" fill="#333"><line x1="${ml}" x2="${ml+18}" y1="${ly}" y2="${ly}" stroke="#7a8296" stroke-dasharray="4 3"/><text x="${ml+22}" y="${ly+3}">β = 1 (piso)</text>
+ <line x1="${ml+100}" x2="${ml+118}" y1="${ly}" y2="${ly}" stroke="#B03A2E" stroke-dasharray="4 3"/><text x="${ml+122}" y="${ly+3}">β = 2 (cancela)</text>
+ <line x1="${ml}" x2="${ml+18}" y1="${ly+13}" y2="${ly+13}" stroke="#1B2A4A" stroke-width="2"/><text x="${ml+22}" y="${ly+16}">escalera</text>
+ <line x1="${ml+100}" x2="${ml+118}" y1="${ly+13}" y2="${ly+13}" stroke="#1F7A5C" stroke-width="2"/><text x="${ml+122}" y="${ly+16}">curva β</text>
+ <circle cx="${ml+9}" cy="${ly+26}" r="3.6" fill="#C9A84C" stroke="#1B2A4A"/><text x="${ml+22}" y="${ly+29}">α (sorteo en que sale cada distinto)</text>
+ <circle cx="${ml+9}" cy="${ly+39}" r="3.6" fill="#fff" stroke="#B03A2E" stroke-width="1.6"/><text x="${ml+22}" y="${ly+42}">β (sorteo antes del cambio)</text></g></svg>`;
+ return s}
+function render(){render1("u");render1("d")}
+function render1(f){
+ const R=[],Cer=[];
+ for(let i=0;i<20;i++){const s=LB.sim(data,i,f);
+  if(s.ep)R.push({pos:i,dig:s.ep.dig,A:s.ep.A,arr:s.ep.arr,L:s.ep.L});
+  else if(s.saleEp)R.push({pos:i,dig:s.saleEp.dig,A:s.saleEp.A,arr:s.saleEp.arr,L:s.saleEp.L,salio:true,Ys:s.saleEp.Ys,dentro:s.saleEp.dentro});
+  s.cer.forEach(c=>Cer.push(c))}
+ if(!R.length){$("lista-"+f).innerHTML='<div class="vac">Ninguna fila está en análisis por ahora (se entra al llegar a '+LIM+' sorteos sin salir).</div>';$("calc-"+f).innerHTML=""}
+ else{
+ let h='<table><thead><tr><th class="p">Pos</th><th>Dígito<br>faltante</th>';
+ for(let x=1;x<=10;x++)h+=`<th>${x}º</th>`;
+ h+='<th class="fin">α máx</th><th class="fin">β máx</th><th class="fin">Reglas<br>de oro</th><th class="fin">Y proy. /<br>ventana</th><th class="fin" colspan="11">Jugada · sorteos Y−11 a Y−1 (monto a apostar)</th><th class="fin">Apostado<br>hasta hoy</th><th class="fin">Estado</th><th class="fin">Gráfico</th></tr></thead><tbody>';
+ let C="";
+ for(const r of R){const A=r.A,e=estado(r);
+  const ap=A.v1!==undefined?LB.apuesta(A,r.salio?r.Ys:A.Yact,r.salio?r.Ys:null):null;
+  const apT=ap?("$ "+mon(ap.tot)+(ap.hit?`<br>premio $ ${mon(ap.premio)}<br>neto $ ${mon(ap.neto)}`:"")):"—";
+  h+=`<tr><td class="pos">${P(r.pos)}</td><td class="dg">${r.dig}</td>`+celdas(r)+
+   `<td class="f">${n5(A.amax)}</td><td class="f">${A.bmax!==null?n5(A.bmax):"—"}</td><td class="f ok">OK${LB.reglas.r3?"":"<br><small style=\"font-weight:400\">regla 3 no aplica</small>"}</td>`+
+   `<td class="f">${A.v1!==undefined?"Y "+A.Y+"<br>sorteos "+A.v1+" a "+A.v2+"<br>hoy: "+A.Yact:"—<br>hoy: "+A.Yact}</td>`+jugada(r)+
+   `<td class="f">${apT}</td><td class="f ${e.c}">${e.t}</td><td class="f"><button class="btn" onclick="tg('${f+r.pos}')">${OPEN.has(f+r.pos)?"Ocultar":"Ver gráfico"}</button></td></tr>`;
+  const gk=f+r.pos,gr=OPEN.has(gk)?`<div class="gr" style="margin-top:6px">${grafico(r)}</div>`:"";
+  if(A.cad)C+=`<div><b>Pos ${P(r.pos)}</b> (dígito ${r.dig}): β máx = ${n5(A.cad[0])} → β 8 virtual = ${n5(A.cad[1])} (pasa a ser β 9 máx) → β 9 virtual = ${n5(A.cad[2])} (pasa a ser β 10 máx) → β 10 virtual = ${n5(A.cad[3])} → Y = 10<sup>${n5(A.cad[3])}</sup> = ${A.yraw.toFixed(2).replace(".",",")} → <b>${A.Y}</b> · ventana: sorteos <b>${A.v1} a ${A.v2}</b> · arranque ${fmt(r.arr)}${gr}</div>`;
+  else C+=`<div><b>Pos ${P(r.pos)}</b> (dígito ${r.dig}): ${A.sinB?"salió el 9º distinto pero no hubo ningún β; falta definir qué se hace":"todavía no salió el 9º distinto (van "+A.nd+")"} · arranque ${fmt(r.arr)}${gr}</div>`}
+ h+='</tbody></table>';$("lista-"+f).innerHTML=h;
+ $("calc-"+f).innerHTML='<div class="calc"><b class="t">Cálculo por fila</b>'+C+'</div>'}
+ Cer.sort((a,b)=>b.t-a.t||a.pos-b.pos);
+ if(!Cer.length)$("cerr-"+f).innerHTML='<div class="vac">Todavía no hay análisis cerrados.</div>';
+ else $("cerr-"+f).innerHTML='<table><thead><tr><th class="p">Pos</th><th>Dígito</th><th>Arranque</th><th>Cerró</th><th>Resultado</th><th>Apuesta</th><th>Motivo</th></tr></thead><tbody>'+
+  Cer.map(c=>{const A=c.A;let res,mot,cl,ap;
+   if(c.tipo==="canc"){cl="tipo-canc";res="Cancelado";const k=A.canc;ap=LB.apuesta(A,c.Yc,null);
+    mot=k.regla===3?`Regla de oro 3: los 5 primeros sorteos fueron 5 dígitos distintos (${k.it.map(z=>z.d).join("·")}, sorteos ${k.it[0].y} a ${k.it[k.it.length-1].y}).`
+     :k.regla===1?`Regla de oro 1: α llegó a 2 en el sorteo ${k.y} (dígito ${k.it[0].d}, ${k.it[0].x}º distinto, α ${n5(k.it[0].a)}).`
+     :`Regla de oro 2: α menor que 1 en el sorteo ${k.y}.`}
+   else if(c.tipo==="ventana"){cl="tipo-v";res="Ventana cerrada";ap=LB.apuesta(A,A.v2,null);mot=`Terminó la ventana (sorteos ${A.v1} a ${A.v2}) sin que saliera el ${c.dig}.`}
+   else{cl="tipo-ok";res="Salió ✓";ap=LB.apuesta(A,c.Ys,c.Ys);mot=A.v1===undefined?`Salió el ${c.dig} en el sorteo ${c.Ys}, antes de definirse la ventana.`:`Salió el ${c.dig} en el sorteo ${c.Ys}: ${c.dentro?"dentro":"fuera"} de la ventana (sorteos ${A.v1} a ${A.v2}).`}
+   const aT=ap.tot?("$ "+mon(ap.tot)+(ap.hit?` · premio $ ${mon(ap.premio)} · neto $ ${mon(ap.neto)}`:" · sin premio")):"—";
+   return `<tr><td class="pos">${P(c.pos)}</td><td class="dg">${c.dig}</td><td class="t">${fmt(c.arr)}</td><td class="t">${fmt(c.fecha)}</td><td class="t ${cl}">${res}</td><td class="t">${aT}</td><td class="mot">${mot}</td></tr>`}).join("")+'</tbody></table>'}
+async function cargar(){$("est").textContent="· actualizando…";
+ try{const r=await fetch(URL_DATA,{cache:"no-store"});if(!r.ok)throw new Error(r.status);const j=await r.json();data=LB.parse(j);
+  st(CK,JSON.stringify({t:Date.now(),j:{updated:j.updated,sorteos:Object.fromEntries(Object.entries(j.sorteos||{}).map(([k,v])=>[k,{primera:v&&v.primera}]))}}));
+  $("est").textContent="· base: "+(j.updated?new Date(j.updated).toLocaleString("es-AR",{dateStyle:"short",timeStyle:"short"}):"")}
+ catch(e){let c=null;try{c=JSON.parse(g(CK))}catch(x){}
+  if(c){data=LB.parse(c.j);$("est").textContent="· sin conexión, última copia"}else{data=[];$("est").textContent="· no se pudo leer la base"}}
+ render()}
+$("r3").checked=LB.reglas.r3;$("r3").onchange=()=>{LB.setR3($("r3").checked);render()};
+cargar();setInterval(()=>{if(!document.hidden)cargar()},120000);
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body></html>
