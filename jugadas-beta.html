@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Jugadas · ANÁLISIS Beta</title>
+<meta name="theme-color" content="#1B2A4A">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/beta-32.png">
+<style>
+:root{--navy:#1B2A4A;--gold:#C9A84C;--bg:#E8E6DF;--card:#F5F3EE;--line:#D8D4C8;--org:#F4A340;--red:#B03A2E}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--navy);font-family:-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:var(--navy);color:#fff;padding:6px 14px;border-bottom:3px solid var(--gold);display:flex;align-items:center;gap:12px}
+h1{font:700 17px Georgia,serif;margin:0}
+header small{color:#cfd6e6;font-size:11px}
+.wrap{padding:10px 12px}
+.btn{border:1px solid var(--navy);background:var(--card);color:var(--navy);padding:5px 10px;border-radius:8px;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block}
+header .btn{margin-left:auto}
+.sec{font:700 21px Georgia,serif;letter-spacing:1px;margin:4px 0 0}
+.sub{font:700 16px Georgia,serif;color:#555;margin:6px 0}#est{font:400 12px sans-serif}
+.box{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:auto}
+table{border-collapse:separate;border-spacing:0;font-family:"Courier New",monospace;text-align:center}
+th,td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);white-space:nowrap}
+thead th{background:var(--navy);color:#fff;font:700 12px -apple-system,Segoe UI,Roboto,sans-serif;padding:6px 8px}
+thead th.p{color:var(--gold)}
+th.fin{background:var(--gold)!important;color:var(--navy)!important}
+td.pos{background:var(--org);color:#4A2300;font-weight:700;font-size:19px;padding:6px 12px}
+td.dg{background:#FBF3D9;font-weight:700;font-size:20px;padding:0 12px}
+td.c{min-width:78px;padding:3px 4px;font-size:21px;font-weight:700;background:#FBF3D9}
+td.c small{display:block;font:11px -apple-system,Segoe UI,Roboto,sans-serif;font-weight:400;line-height:1.25}
+td.c.rj{background:#FBD5D0}
+td.c.fa{background:#fff;color:#aaa;border:1px dashed #aaa}
+td.c.ok{background:#CDEBD6;color:#1F5C38}
+td.f{background:#FBF3D9;font:700 12px -apple-system,Segoe UI,Roboto,sans-serif;padding:0 9px;white-space:normal;min-width:96px}
+td.f.rj{background:#FBD5D0;color:var(--red)}td.f.ok{background:#CDEBD6;color:#1F5C38}td.f.jg{background:var(--gold);color:var(--navy);font-size:13px}
+.vac{padding:26px 12px;text-align:center;color:#555;font-size:14px}
+.calc{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px;line-height:1.6}
+.calc b.t{font:700 14px Georgia,serif}.calc code{font-family:"Courier New",monospace}
+.met{margin-top:10px;font-size:12px;color:#444;line-height:1.55}
+
+.sec2{margin-top:22px}
+.sw{display:inline-block;margin:6px 0 2px;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:5px 10px;cursor:pointer}.sw input{vertical-align:-2px;margin-right:6px}
+td.jg1{min-width:46px;padding:3px 3px;font-size:15px;font-weight:700;background:#fff;color:#555}
+td.jg1 small{display:block;font:10px -apple-system,Segoe UI,Roboto,sans-serif;font-weight:400;line-height:1.2}
+td.jg1.pas{background:#eee;color:#aaa}td.jg1.nx{background:var(--gold);color:var(--navy);outline:2px solid var(--navy)}td.jg1.hit{background:#CDEBD6;color:#1F5C38}
+td.jg1.vac{background:#fafafa;color:#ccc}
+td.mot{text-align:left;white-space:normal;min-width:340px;padding:6px 10px;font:13px -apple-system,Segoe UI,Roboto,sans-serif}
+td.t{padding:6px 10px;font:14px "Courier New",monospace}
+.tipo-canc{color:var(--red);font-weight:700}.tipo-ok{color:#1F5C38;font-weight:700}.tipo-v{color:#8a5a00;font-weight:700}
+
+td.c{min-width:92px;font-size:20px}
+td.c .b{color:#B03A2E;font-weight:600}
+td.jg1{min-width:56px}
+.det{margin:6px 0}.det summary{cursor:pointer;font:700 13px sans-serif;padding:4px 0}
+.gr{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:auto;padding:6px;max-height:80vh}
+.gr svg{display:block}
+
+td.n{text-align:right;padding:6px 10px;font:14px "Courier New",monospace}
+td.t{padding:6px 10px;font:13px "Courier New",monospace}
+td.o{text-align:left;padding:6px 10px;font:13px -apple-system,Segoe UI,Roboto,sans-serif;white-space:normal;min-width:230px}
+.pos1{color:#1F5C38;font-weight:700}.neg1{color:#B03A2E;font-weight:700}
+tr.tot td{background:var(--gold);color:var(--navy);font-weight:700;border-top:2px solid var(--navy)}
+tr.sub td{background:#FBF3D9;font-weight:700}
+.res{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 12px}
+.res div{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;min-width:150px}
+.res b{display:block;font:700 18px Georgia,serif}.res span{font-size:12px;color:#555}
+</style></head><body>
+<header><div><h1>β Jugadas · Gastado y ganado</h1><small>cada jugada de ANÁLISIS Beta con su origen · bruto y neto · suma total</small></div><a class="btn" href="analisis-beta.html">‹ ANÁLISIS Beta</a><a class="btn" href="seguimiento.html" style="margin-left:6px">‹ Seguimiento</a></header>
+<div class="wrap">
+ <div class="sub">Resumen <span id="est"></span></div>
+ <div class="res" id="res"></div>
+ <div class="sub">Detalle de cada jugada (la más reciente primero)</div>
+ <div class="box"><div id="tabla"></div></div>
+ <div class="met"><b>Cómo se calcula.</b> Una jugada es un análisis de ANÁLISIS Beta que llegó a su ventana (sorteos Y−11 a Y−1) y apostó al menos un sorteo. <b>Gastado</b> = suma de lo apostado en cada sorteo de la ventana hasta que salió el dígito, se cerró la ventana o se canceló. <b>Ganado bruto</b> = 7 × lo apostado en el sorteo en que salió (0 si no salió dentro de la ventana). <b>Perdido</b> = lo gastado en jugadas que no salieron (en las que salieron es 0, y en las "en juego" todavía no se cuenta). <b>Neto</b> = ganado bruto − gastado. Las jugadas "en juego" cuentan lo apostado hasta el último sorteo cargado y todavía no tienen premio. Los montos son los de la tabla de apuestas y valen igual para todas las posiciones. La regla de oro 3 usa el mismo interruptor que ANÁLISIS Beta.</div>
+</div>
+<script src="beta-core.js"></script>
+<script>
+const URL_DATA=LB.URL_DATA,CK="lw:planillas-cache-v1",LIM=LB.LIM;
+const $=id=>document.getElementById(id);
+const g=k=>{try{return localStorage.getItem(k)}catch(e){return null}},st=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const fmt=LB.fmt,P=i=>String(i+1).padStart(2,"0");
+const m$=x=>(x<0?"− ":"")+"$ "+Math.abs(x).toLocaleString("es-AR");
+const cl=x=>x>0?"pos1":x<0?"neg1":"";
+let data=[];
+function jugadas(){const J=[];
+ for(const f of ["u","d"])for(let i=0;i<20;i++){const s=LB.sim(data,i,f);
+  const fila=(f==="u"?"Unidades":"Decenas")+" · Pos "+P(i);
+  for(const c of s.cer){const A=c.A;if(A.v1===undefined)continue;let ap,res,cierre,sorteoTxt;
+   if(c.tipo==="salio"){ap=LB.apuesta(A,c.Ys,c.Ys);res=ap.hit?"Salió ✓ dentro de la ventana":"Salió fuera de la ventana";cierre=c.fecha;sorteoTxt="salió en el sorteo "+c.Ys}
+   else if(c.tipo==="ventana"){ap=LB.apuesta(A,A.v2,null);res="Ventana cerrada sin salir";cierre=c.fecha;sorteoTxt="ventana terminó en el sorteo "+A.v2}
+   else{ap=LB.apuesta(A,c.Yc,null);res="Cancelado por regla de oro "+A.canc.regla;cierre=c.fecha;sorteoTxt="cancelado en el sorteo "+c.Yc}
+   if(!ap.tot)continue;
+   J.push({f,fila,dig:c.dig,arr:c.arr,cierre,Y:A.Y,v1:A.v1,v2:A.v2,res,sorteoTxt,tot:ap.tot,premio:ap.premio,neto:ap.neto,juego:false})}
+  if(s.ep&&s.ep.A.v1!==undefined){const A=s.ep.A;const ap=LB.apuesta(A,A.Yact,null);
+   if(ap.tot)J.push({f,fila,dig:s.ep.dig,arr:s.ep.arr,cierre:data[data.length-1].k,Y:A.Y,v1:A.v1,v2:A.v2,res:"En juego",sorteoTxt:"van "+A.Yact+" sorteos",tot:ap.tot,premio:0,neto:-ap.tot,juego:true})}}
+ J.sort((a,b)=>b.cierre.localeCompare(a.cierre)||a.fila.localeCompare(b.fila));return J}
+function sum(J){return J.reduce((r,j)=>({n:r.n+1,per:r.per+(j.juego||j.premio>0?0:j.tot),tot:r.tot+j.tot,premio:r.premio+j.premio,neto:r.neto+j.neto,ok:r.ok+(j.premio>0?1:0)}),{n:0,per:0,tot:0,premio:0,neto:0,ok:0})}
+function render(){const J=jugadas(),T=sum(J),U=sum(J.filter(j=>j.f==="u")),D=sum(J.filter(j=>j.f==="d"));
+ $("res").innerHTML=`<div><span>Jugadas</span><b>${T.n}</b><span>${T.ok} con premio</span></div><div><span>Gastado</span><b>${m$(T.tot)}</b></div><div><span>Perdido</span><b>${m$(T.per)}</b><span>jugadas que no salieron</span></div><div><span>Ganado bruto</span><b>${m$(T.premio)}</b></div><div><span>Neto</span><b class="${cl(T.neto)}">${m$(T.neto)}</b></div>`;
+ if(!J.length){$("tabla").innerHTML='<div class="vac">Todavía no hay jugadas: ninguna fila llegó a su ventana de juego.</div>';return}
+ const row=(j,k)=>`<tr><td class="t">${J.length-k}</td><td class="o"><b>${j.fila}</b> · dígito <b>${j.dig}</b><br>arranque ${fmt(j.arr)} · Y ${j.Y} · ventana sorteos ${j.v1} a ${j.v2}</td><td class="t">${fmt(j.cierre)}</td><td class="o">${j.res}<br><small>${j.sorteoTxt}</small></td><td class="n">${m$(j.tot)}</td><td class="n">${m$(j.premio)}</td><td class="n">${m$(j.juego||j.premio>0?0:j.tot)}</td><td class="n ${cl(j.neto)}">${m$(j.neto)}</td></tr>`;
+ const tr=(t,S,c)=>`<tr class="${c}"><td colspan="4" style="text-align:right">${t} (${S.n} jugadas)</td><td class="n">${m$(S.tot)}</td><td class="n">${m$(S.premio)}</td><td class="n">${m$(S.per)}</td><td class="n">${m$(S.neto)}</td></tr>`;
+ $("tabla").innerHTML='<table><thead><tr><th>N°</th><th>Origen de la jugada</th><th>Fecha de cierre</th><th>Resultado</th><th>Gastado</th><th>Ganado bruto</th><th>Perdido</th><th>Neto</th></tr></thead><tbody>'+J.map(row).join("")+tr("Subtotal Unidades",U,"sub")+tr("Subtotal Decenas",D,"sub")+tr("TOTAL",T,"tot")+'</tbody></table>'}
+async function cargar(){$("est").textContent="· actualizando…";
+ try{const r=await fetch(URL_DATA,{cache:"no-store"});if(!r.ok)throw new Error(r.status);const j=await r.json();data=LB.parse(j);
+  st(CK,JSON.stringify({t:Date.now(),j:{updated:j.updated,sorteos:Object.fromEntries(Object.entries(j.sorteos||{}).map(([k,v])=>[k,{primera:v&&v.primera}]))}}));
+  $("est").textContent="· base: "+(j.updated?new Date(j.updated).toLocaleString("es-AR",{dateStyle:"short",timeStyle:"short"}):"")}
+ catch(e){let c=null;try{c=JSON.parse(g(CK))}catch(x){}
+  if(c){data=LB.parse(c.j);$("est").textContent="· sin conexión, última copia"}else{data=[];$("est").textContent="· no se pudo leer la base"}}
+ render()}
+cargar();setInterval(()=>{if(!document.hidden)cargar()},120000);
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body></html>
